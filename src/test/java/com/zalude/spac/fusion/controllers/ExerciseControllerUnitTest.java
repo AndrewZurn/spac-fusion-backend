@@ -1,9 +1,16 @@
 package com.zalude.spac.fusion.controllers;
 
-/**
- * TODO: DESCRIPTION OF CLASS HERE
- *
- * @author Andrew Zurn (azurn)
- */
+import com.zalude.spac.fusion.services.ExerciseService;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
 public class ExerciseControllerUnitTest {
+
+    @Mock
+    private ExerciseService exerciseService;
+
+    private ExerciseController exerciseController = new ExerciseController(exerciseService);
+
 }

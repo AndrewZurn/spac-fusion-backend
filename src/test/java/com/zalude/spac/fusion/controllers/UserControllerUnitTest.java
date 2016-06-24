@@ -1,9 +1,16 @@
 package com.zalude.spac.fusion.controllers;
 
-/**
- * TODO: DESCRIPTION OF CLASS HERE
- *
- * @author Andrew Zurn (azurn)
- */
+import com.zalude.spac.fusion.services.UserService;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
 public class UserControllerUnitTest {
+
+    @Mock
+    private UserService userService;
+
+    private UserController userController = new UserController(userService);
+
 }

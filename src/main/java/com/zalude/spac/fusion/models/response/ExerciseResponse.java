@@ -6,4 +6,5 @@ package com.zalude.spac.fusion.models.response;
  * @author Andrew Zurn (azurn)
  */
 public class ExerciseResponse {
+
 }

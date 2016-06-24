@@ -1,9 +1,15 @@
 package com.zalude.spac.fusion.services;
 
-/**
- * TODO: DESCRIPTION OF CLASS HERE
- *
- * @author Andrew Zurn (azurn)
- */
+import com.zalude.spac.fusion.repositories.WorkoutRepository;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
 public class WorkoutServiceUnitTest {
+
+    @Mock
+    private WorkoutRepository workoutRepository;
+
+    private WorkoutService workoutService = new WorkoutService(workoutRepository);
 }

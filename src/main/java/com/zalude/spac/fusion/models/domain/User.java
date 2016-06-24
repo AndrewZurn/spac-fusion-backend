@@ -1,7 +1,10 @@
 package com.zalude.spac.fusion.models.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.UUID;
 
 /**
@@ -10,24 +13,31 @@ import java.util.UUID;
  *
  * @author Andrew Zurn (azurn)
  */
-@lombok.Getter
-@lombok.Setter
-@lombok.RequiredArgsConstructor
-@lombok.EqualsAndHashCode(of = {"username", "email", "firstname", "lastname"})
-@lombok.ToString(exclude = "password")
+@Data
+@Entity
+@ToString(exclude = "password")
 public class User {
 
+    @Id
     private UUID id;
+
     private String firstname;
+
     private String lastname;
+
     private String username;
 
     @JsonIgnore
     private String password;
+
     private String email;
+
     private int age;
+
     private double height;
+
     private ProgramLevel programLevel;
+
     private ActiveStatus activeStatus;
 
     enum ProgramLevel {

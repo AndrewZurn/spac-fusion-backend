@@ -1,0 +1,17 @@
+version: '2'
+services:
+  db:
+    image: postgres:9.5.3
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: spac_fusion
+    ports:
+      - 15432:5432
+    expose:
+      - 5432
+    networks:
+      - back
+networks:
+  back:
+    driver: bridge

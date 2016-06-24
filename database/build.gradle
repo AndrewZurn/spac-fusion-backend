@@ -1,0 +1,75 @@
+buildscript {
+    ext {
+        springBootVersion = '1.3.0.RC1'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.liquibase:liquibase-gradle-plugin:1.1.1")
+        classpath('org.postgresql:postgresql:9.4-1203-jdbc42')
+        classpath('org.yaml:snakeyaml:1.15')
+    }
+}
+
+plugins {
+    id "com.github.hierynomus.license" version "0.11.0"
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.liquibase.gradle'
+
+jar {
+    baseName = 'spac-fusion-api-liquibase'
+    version = '0.1.0'
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.6'
+}
+
+String changeLogFileLocation = 'liquibase/master.yml'
+String envs = System.properties.getProperty('environments')
+liquibase {
+    activities {
+        local {
+            changeLogFile changeLogFileLocation
+            url 'jdbc:postgresql://localhost:15432/spac_fusion'
+            username 'admin'
+            password 'admin'
+        }
+        localTest {
+            changeLogFile changeLogFileLocation
+            url 'jdbc:postgresql://localhost:15432/spac_fusion_test'
+            username 'admin'
+            password 'admin'
+        }
+        dev {
+            changeLogFile changeLogFileLocation
+            url 'jdbc:postgresql://someUrl:5432/spac_fusion'
+            username 'admin'
+            password 'somepass'
+        }
+        prod {
+            changeLogFile changeLogFileLocation
+            url 'jdbc:postgresql://someUrl:5432/spac_fusion'
+            username 'admin'
+            password 'somepass'
+        }
+    }
+
+    // we want to default to 'local' if environments aren't set.
+    runList = envs == null ? "local" : envs
+}
+
+
+downloadLicenses {
+    includeProjectDependencies = true
+    dependencyConfiguration = 'compile'
+}

@@ -1,6 +1,9 @@
 package com.zalude.spac.fusion.models.domain;
 
-import java.time.Duration;
+import lombok.*;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,15 +13,13 @@ import java.util.UUID;
  *
  * @author Andrew Zurn (azurn)
  */
-@lombok.Getter
-@lombok.Setter
-@lombok.RequiredArgsConstructor
-@lombok.EqualsAndHashCode(of = {"exerciseOptions", "duration"})
-@lombok.ToString
+@Data
+@Entity
 public class Exercise {
 
-    private final UUID id;
-    private final Set<ExerciseOption> exerciseOptions;
-    private final ExerciseActivity exerciseActivity;
+    @Id
+    private UUID id;
+
+    //private final Set<ExerciseOption> exerciseOptions;
 
 }

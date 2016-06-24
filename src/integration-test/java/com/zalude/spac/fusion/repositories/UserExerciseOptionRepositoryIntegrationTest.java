@@ -5,5 +5,5 @@ package com.zalude.spac.fusion.repositories;
  *
  * @author Andrew Zurn (azurn)
  */
-public class ExerciseRepositoryUnitTest {
+public class UserExerciseOptionRepositoryIntegrationTest {
 }
