@@ -1,28 +1,29 @@
 apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: 'groovy'
 apply plugin: 'spring-boot'
 
 buildscript {
-	ext {
-		springBootVersion = '1.3.5.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
-	}
+    ext {
+        springBootVersion = '1.3.5.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 jar {
-	baseName = 'spac-fusion'
-	version = '0.0.1-SNAPSHOT'
+    baseName = 'spac-fusion'
+    version = '0.0.1-SNAPSHOT'
 }
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 sourceSets {
@@ -30,7 +31,7 @@ sourceSets {
         java {
             compileClasspath += main.output + test.output
             runtimeClasspath += main.output + test.output
-            srcDir file('src/integration-test/java')
+            srcDir file('src/integration-test/groovy')
         }
         resources.srcDir file('src/integration-test/resources')
     }
@@ -44,17 +45,24 @@ configurations {
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.boot:spring-boot-actuator-docs')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-data-rest')
-	compile('org.projectlombok:lombok:1.16.6')
-	compile('org.springframework.retry:spring-retry')
-	compile('org.springframework.boot:spring-boot-starter-social-facebook')
-	compile('org.springframework.boot:spring-boot-starter-websocket')
-	runtime('org.postgresql:postgresql')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-    integrationTestCompile 'org.assertj:assertj-core:3.0.0'
+    compile 'com.google.guava:guava:19.0'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    compile('org.codehaus.groovy:groovy-all:2.3.11')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-actuator-docs')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.projectlombok:lombok:1.16.6')
+    compile('org.springframework.retry:spring-retry')
+    compile('org.springframework.boot:spring-boot-starter-social-facebook')
+    compile('org.springframework.boot:spring-boot-starter-websocket')
+    compile "org.functionaljava:functionaljava:4.6"
+    compile "org.functionaljava:functionaljava-java8:4.6"
+    compile "org.functionaljava:functionaljava-quickcheck:4.6"
+    compile "org.functionaljava:functionaljava-java-core:4.6"
+    runtime('org.postgresql:postgresql')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.3'
+    integrationTestCompile 'org.spockframework:spock-spring:1.0-groovy-2.3'
 }
 
 //Create the task that runs the integration tests found from the
@@ -64,6 +72,8 @@ task integrationTest(type: Test) {
     classpath = sourceSets.integrationTest.runtimeClasspath
     //If you want to ensure that integration tests are run every time when you invoke
     //this task, uncomment the following line.
+    include '**/*IntegrationTest.*'
+    systemProperty 'spring.profiles.active', 'integration'
     outputs.upToDateWhen { false }
 }
 
@@ -75,11 +85,4 @@ integrationTest.mustRunAfter test
 //Ensure that the HTML reports of unit and integration tests are written to different directories.
 tasks.withType(Test) {
     reports.html.destination = file("${reporting.baseDir}/${name}")
-}
-
-eclipse {
-	classpath {
-		 containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-		 containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
-	}
 }

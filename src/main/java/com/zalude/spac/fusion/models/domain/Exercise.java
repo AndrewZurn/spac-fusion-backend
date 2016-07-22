@@ -1,10 +1,16 @@
 package com.zalude.spac.fusion.models.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import lombok.experimental.Tolerate;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -13,13 +19,33 @@ import java.util.UUID;
  *
  * @author Andrew Zurn (azurn)
  */
-@Data
 @Entity
+@Getter
+@Setter
+@RequiredArgsConstructor
+@EqualsAndHashCode(of = "id")
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Exercise {
 
-    @Id
-    private UUID id;
+  @Id
+  @Type(type = "pg-uuid")
+  @NotNull
+  private UUID id;
 
-    //private final Set<ExerciseOption> exerciseOptions;
+  @NonNull
+  private String name;
+
+  @NonNull
+  private String description;
+
+  @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+  @NonNull
+  @JsonManagedReference
+  private List<ExerciseOption> exerciseOptions;
+
+  @Tolerate
+  Exercise() {
+  }
 
 }

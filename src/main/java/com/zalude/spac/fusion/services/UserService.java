@@ -14,10 +14,14 @@ import javax.inject.Inject;
  * @author Andrew Zurn (azurn)
  */
 @Service
-@RequiredArgsConstructor(onConstructor = @_(@Inject))
 public class UserService {
 
-    private final @NonNull UserExerciseOptionLookupRepository userExerciseOptionLookupRepository;
-    private final @NonNull UserRepository userRepository;
+    private @NonNull UserExerciseOptionLookupRepository userExerciseOptionLookupRepository;
+    private @NonNull UserRepository userRepository;
 
+    @Inject
+    public UserService(UserExerciseOptionLookupRepository userExerciseOptionLookupRepository, UserRepository userRepository) {
+        this.userExerciseOptionLookupRepository = userExerciseOptionLookupRepository;
+        this.userRepository = userRepository;
+    }
 }

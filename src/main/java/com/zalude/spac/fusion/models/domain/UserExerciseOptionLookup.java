@@ -1,9 +1,11 @@
 package com.zalude.spac.fusion.models.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import lombok.experimental.Tolerate;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 /**
@@ -11,17 +13,33 @@ import java.util.UUID;
  *
  * @author Andrew Zurn (azurn)
  */
-@Data
 @Entity
+@Getter
+@Setter
+@RequiredArgsConstructor
+@EqualsAndHashCode(of = "id")
+@ToString(exclude = "exerciseOption")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserExerciseOptionLookup {
 
     @Id
+    @Type(type = "pg-uuid")
+    @NonNull
     private UUID id;
 
-    private UUID userId;
+    @NonNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private FusionUser user;
 
-    private UUID exerciseOptionId;
+    @NonNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exercise_option_id")
+    private ExerciseOption exerciseOption;
 
+    @NonNull
     private String amountCompleted;
 
+    @Tolerate
+    public UserExerciseOptionLookup() {}
 }

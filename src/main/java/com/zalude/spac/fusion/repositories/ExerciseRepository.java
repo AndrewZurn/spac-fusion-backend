@@ -4,6 +4,7 @@ import com.zalude.spac.fusion.models.domain.Exercise;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -14,4 +15,5 @@ import java.util.UUID;
 @Repository
 public interface ExerciseRepository extends PagingAndSortingRepository<Exercise, UUID> {
 
+  List<Exercise> findByNameAndIdNot(String name, UUID id);
 }

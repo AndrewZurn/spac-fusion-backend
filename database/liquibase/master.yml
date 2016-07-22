@@ -1,4 +1,4 @@
 databaseChangeLog:
   - preConditions: []
-#  - include:
-#      file: "liquibase/changelog/000_initial_schema.yml"
+  - include:
+      file: "liquibase/changelog/000_initial_schema.yml"

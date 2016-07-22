@@ -1,0 +1,201 @@
+databaseChangeLog:
+    - changeSet:
+        id: "000-create-pgcrypto"
+        author: "azurn"
+        changes:
+          - sql:
+              sql: "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    - changeSet:
+        id: "000-create-initial-table"
+        author: "azurn"
+        changes:
+          - createTable:
+              tableName: "exercise"
+              schemaName: "public"
+              columns:
+                - column:
+                    name: "id"
+                    type: "uuid"
+                    defaultValueComputed: "gen_random_uuid()"
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: "name"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "description"
+                    type: "text"
+          - createTable:
+              tableName: "exercise_option"
+              schemaName: "public"
+              columns:
+                - column:
+                    name: "id"
+                    type: "uuid"
+                    defaultValueComputed: "gen_random_uuid()"
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: "name"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "description"
+                    type: "text"
+                - column:
+                    name: "type"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "target_amount"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "alternative_for_exercise_option_id"
+                    type: "uuid"
+                - column:
+                    name: "exercise_id"
+                    type: "uuid"
+          - createTable:
+              tableName: "fusion_user"
+              schemaName: "public"
+              columns:
+                - column:
+                    name: "id"
+                    type: "uuid"
+                    defaultValueComputed: "gen_random_uuid()"
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: "first_name"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "last_name"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "username"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "password"
+                    type: "varchar(60)"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "email"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "age"
+                    type: "integer"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "height"
+                    type: "double precision"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "program_level"
+                    type: "integer"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "active_status"
+                    type: "boolean"
+                    constraints:
+                      nullable: false
+          - createTable:
+              tableName: "user_exercise_option_lookup"
+              schemaName: "public"
+              columns:
+                - column:
+                    name: "id"
+                    type: "uuid"
+                    defaultValueComputed: "gen_random_uuid()"
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: "user_id"
+                    type: "uuid"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "exercise_option_id"
+                    type: "uuid"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "amount_completed"
+                    type: "text"
+                    constraints:
+                      nullable: false
+          - createTable:
+              tableName: "workout"
+              schemaName: "public"
+              columns:
+                - column:
+                    name: "id"
+                    type: "uuid"
+                    defaultValueComputed: "gen_random_uuid()"
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: "duration"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "workout_date"
+                    type: "timestamp with time zone"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "exercise_id"
+                    type: "uuid"
+                    constraints:
+                      nullable: false
+    - changeSet:
+        id: "000-add-foreign-keys"
+        author: "azurn"
+        changes:
+        - addForeignKeyConstraint:
+            constraintName: fk_exercise_option_to_exercise
+            baseTableName: exercise_option
+            baseColumnNames: exercise_id
+            referencedTableName: exercise
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            constraintName: fk_exercise_option_parent
+            baseTableName: exercise_option
+            baseColumnNames: alternative_for_exercise_option_id
+            referencedTableName: exercise_option
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            constraintName: fk_user_exercise_option_lookup_to_exercise_option
+            baseTableName: user_exercise_option_lookup
+            baseColumnNames: exercise_option_id
+            referencedTableName: exercise_option
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            constraintName: fk_workout_to_exercise
+            baseTableName: workout
+            baseColumnNames: exercise_id
+            referencedTableName: exercise
+            referencedColumnNames: id

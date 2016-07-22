@@ -1,5 +1,6 @@
 package com.zalude.spac.fusion.services;
 
+import com.zalude.spac.fusion.repositories.ExerciseOptionRepository;
 import com.zalude.spac.fusion.repositories.ExerciseRepository;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,7 +12,9 @@ public class ExerciseServiceUnitTest {
     @Mock
     private ExerciseRepository exerciseRepository;
 
-    private ExerciseService exerciseService = new ExerciseService(exerciseRepository);
+    @Mock
+    private ExerciseOptionRepository exerciseOptionRepository;
 
+    private ExerciseService exerciseService = new ExerciseService(exerciseRepository, exerciseOptionRepository);
 
 }

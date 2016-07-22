@@ -11,5 +11,8 @@ public class WorkoutServiceUnitTest {
     @Mock
     private WorkoutRepository workoutRepository;
 
-    private WorkoutService workoutService = new WorkoutService(workoutRepository);
+    @Mock
+    private ExerciseService exerciseService;
+
+    private WorkoutService workoutService = new WorkoutService(workoutRepository, exerciseService);
 }

@@ -14,10 +14,14 @@ import javax.inject.Inject;
  * @author Andrew Zurn (azurn)
  */
 @RestController
-@RequestMapping(path = "/user")
-@RequiredArgsConstructor(onConstructor = @_(@Inject))
+@RequestMapping(path = "/users")
 public class UserController {
 
-    private final @NonNull UserService userService;
+    private @NonNull UserService userService;
+
+    @Inject
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
 }
