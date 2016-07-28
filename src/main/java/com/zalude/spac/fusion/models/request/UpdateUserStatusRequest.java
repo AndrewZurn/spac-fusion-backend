@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -18,23 +17,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCompletedWorkoutRequest {
+public class UpdateUserStatusRequest {
 
   @NotNull
-  private List<CompletedExerciseResultRequest> results;
-
-  @Getter
-  @Setter
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class CompletedExerciseResultRequest {
-
-    @NotNull
-    private UUID exerciseOptionId;
-
-    @NotNull
-    private String amountCompleted;
-
-  }
-  
+  private Boolean active;
 }

@@ -26,71 +26,94 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FusionUser {
 
-    @Id
-    @Type(type = "pg-uuid")
-    @NonNull
-    private UUID id;
+  @Id
+  @Type(type = "pg-uuid")
+  @NonNull
+  private UUID id;
 
-    @NonNull
-    private String firstName;
+  @NonNull
+  private String firstName;
 
-    @NonNull
-    private String lastName;
+  @NonNull
+  private String lastName;
 
-    @NonNull
-    private String username;
+  @NonNull
+  private String username;
 
-    @NonNull
-    private String email;
+  @NonNull
+  private String email;
 
-    @JsonIgnore
-    @NotNull
-    private String password;
+  @NotNull
+  private Integer age;
 
-    @NotNull
-    private Integer age;
+  @NotNull
+  private Double height;
 
-    @NotNull
-    private Double height;
+  @NotNull
+  private Double weight;
 
-    @NotNull
-    private Integer programLevel;
+  @NotNull
+  private Integer programLevel;
 
-    @NotNull
-    private Boolean activeStatus;
+  @NotNull
+  private Boolean activeStatus;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
-    private List<UserExerciseOptionLookup> userExerciseOptionLookups;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
+  @JsonIgnore
+  private List<UserExerciseOptionLookup> userExerciseOptionLookups;
 
-    public enum ProgramLevel {
-        GOLD(2, "Gold"), SILVER(1, "Silver"), BRONZE(0, "Bronze");
+  public enum ProgramLevel {
+    GOLD(2, "Gold"), SILVER(1, "Silver"), BRONZE(0, "Bronze");
 
-        private int level;
-        private String name;
+    private int level;
+    private String name;
 
-        private ProgramLevel(int level, String name) {
-            this.level = level;
-            this.name = name;
-        }
-
-        public ProgramLevel fromValue(int level) {
-            return valueOf(Integer.toString(level));
-        }
+    private ProgramLevel(int level, String name) {
+      this.level = level;
+      this.name = name;
     }
 
-    @Tolerate
-    public FusionUser() {}
-
-    public FusionUser(UUID id, String firstName, String lastName, String username, String email, String password, Integer age, Double height, Integer programLevel, Boolean activeStatus) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.age = age;
-        this.height = height;
-        this.programLevel = programLevel;
-        this.activeStatus = activeStatus;
+    public ProgramLevel fromValue(int level) {
+      switch (level) {
+        case 0:
+          return ProgramLevel.BRONZE;
+        case 1:
+          return ProgramLevel.SILVER;
+        case 2:
+          return ProgramLevel.GOLD;
+        default:
+          throw new UnsupportedOperationException("Unsupported Program Level. Value: " + level);
+      }
     }
+
+    public ProgramLevel fromValue(String level) {
+      switch (level.toUpperCase()) {
+        case "BRONZE":
+          return ProgramLevel.BRONZE;
+        case "SILVER":
+          return ProgramLevel.SILVER;
+        case "GOLD":
+          return ProgramLevel.GOLD;
+        default:
+          throw new UnsupportedOperationException("Unsupported Program Level. Value: " + level);
+      }
+    }
+  }
+
+  @Tolerate
+  public FusionUser() {
+  }
+
+  public FusionUser(UUID id, String firstName, String lastName, String username, String email, Integer age, Double height, Double weight, Integer programLevel, Boolean activeStatus) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.username = username;
+    this.email = email;
+    this.age = age;
+    this.height = height;
+    this.weight = weight;
+    this.programLevel = programLevel;
+    this.activeStatus = activeStatus;
+  }
 }

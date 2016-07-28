@@ -35,7 +35,7 @@ class ExerciseControllerIntegrationTest extends ControllerIntegrationTestBase im
     }
 
     def cleanup() {
-        exerciseRepository.deleteAll()
+        exerciseRepository.deleteAllInBatch()
     }
 
     def "get an empty list of workouts"() {

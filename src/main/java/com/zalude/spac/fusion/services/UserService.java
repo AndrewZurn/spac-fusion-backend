@@ -1,12 +1,20 @@
 package com.zalude.spac.fusion.services;
 
+import com.zalude.spac.fusion.exceptions.ResourceNotFoundException;
+import com.zalude.spac.fusion.exceptions.ResourceValidationException;
+import com.zalude.spac.fusion.models.domain.FusionUser;
+import com.zalude.spac.fusion.models.domain.UserExerciseOptionLookup;
 import com.zalude.spac.fusion.repositories.UserExerciseOptionLookupRepository;
 import com.zalude.spac.fusion.repositories.UserRepository;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * TODO: DESCRIPTION OF CLASS HERE
@@ -16,12 +24,107 @@ import javax.inject.Inject;
 @Service
 public class UserService {
 
-    private @NonNull UserExerciseOptionLookupRepository userExerciseOptionLookupRepository;
-    private @NonNull UserRepository userRepository;
+  @NonNull
+  private UserExerciseOptionLookupRepository userExerciseOptionLookupRepository;
+  @NonNull
+  private UserRepository userRepository;
 
-    @Inject
-    public UserService(UserExerciseOptionLookupRepository userExerciseOptionLookupRepository, UserRepository userRepository) {
-        this.userExerciseOptionLookupRepository = userExerciseOptionLookupRepository;
-        this.userRepository = userRepository;
+  @Inject
+  public UserService(UserExerciseOptionLookupRepository userExerciseOptionLookupRepository, UserRepository userRepository) {
+    this.userExerciseOptionLookupRepository = userExerciseOptionLookupRepository;
+    this.userRepository = userRepository;
+  }
+
+  public Iterable<FusionUser> findAllUsers() {
+    return userRepository.findAll();
+  }
+
+  public Optional<FusionUser> find(UUID userId) {
+    return Optional.ofNullable(userRepository.findOne(userId));
+  }
+
+  public FusionUser create(FusionUser user) throws ResourceValidationException {
+    return userRepository.save(user);
+  }
+
+  public FusionUser update(FusionUser user) throws ResourceValidationException, ResourceNotFoundException {
+    val existingUser = userRepository.findOne(user.getId());
+    updateUserInstanceField(user, existingUser);
+    return userRepository.save(existingUser);
+  }
+
+  public boolean updateStatus(UUID userId, boolean newStatus) throws ResourceNotFoundException {
+    if (!userRepository.exists(userId)) {
+      throw new ResourceNotFoundException(userId, null);
+    } else {
+      userRepository.updateUserStatus(userId, newStatus);
+      return userRepository.findOne(userId).getActiveStatus() == newStatus;
     }
+  }
+
+  public Optional<Iterable<UserExerciseOptionLookup>> getCompletedWorkoutsForUser(UUID userId) {
+    val user = find(userId);
+    if (!user.isPresent()) {
+      return Optional.empty();
+    } else {
+      return Optional.ofNullable(userExerciseOptionLookupRepository.findAllByUserId(userId));
+    }
+  }
+
+  public Optional<Iterable<UserExerciseOptionLookup>> getCompletedWorkoutForUser(UUID userId, UUID workoutId) {
+    val user = find(userId);
+    if (!user.isPresent()) {
+      return Optional.empty();
+    } else {
+      return Optional.ofNullable(userExerciseOptionLookupRepository.findAllByUserIdAndWorkoutId(userId, workoutId));
+    }
+  }
+
+  public Iterable<UserExerciseOptionLookup> saveUserExerciseOptionLookup(List<UserExerciseOptionLookup> userExerciseOptionLookups) throws ResourceValidationException, ResourceNotFoundException {
+    return userExerciseOptionLookupRepository.save(userExerciseOptionLookups);
+  }
+
+  public boolean updateUserExerciseOptionLookup(UUID userId, UUID userExerciseOptionLookupId, String amountCompleted) {
+    userExerciseOptionLookupRepository.updateLookup(userExerciseOptionLookupId, amountCompleted);
+    val lookup = userExerciseOptionLookupRepository.findOne(userExerciseOptionLookupId);
+    return lookup.getAmountCompleted().equals(amountCompleted);
+  }
+
+  private void updateUserInstanceField(FusionUser user, FusionUser existingUser) {
+    if (user.getFirstName() != null) {
+      existingUser.setFirstName(user.getFirstName());
+    }
+
+    if (user.getLastName() != null) {
+      existingUser.setLastName(user.getLastName());
+    }
+
+    if (user.getUsername() != null) {
+      existingUser.setUsername(user.getUsername());
+    }
+
+    if (user.getEmail() != null) {
+      existingUser.setEmail(user.getEmail());
+    }
+
+    if (user.getAge() != null) {
+      existingUser.setAge(user.getAge());
+    }
+
+    if (user.getHeight() != null) {
+      existingUser.setHeight(user.getHeight());
+    }
+
+    if (user.getWeight() != null) {
+      existingUser.setWeight(user.getWeight());
+    }
+
+    if (user.getProgramLevel() != null) {
+      existingUser.setProgramLevel(user.getProgramLevel());
+    }
+
+    if (user.getActiveStatus() != null) {
+      existingUser.setActiveStatus(user.getActiveStatus());
+    }
+  }
 }

@@ -39,7 +39,10 @@ public class Exercise {
   @NonNull
   private String description;
 
-  @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+  @OneToMany(mappedBy = "exercise",
+      cascade = CascadeType.ALL,
+      fetch = FetchType.EAGER,
+      orphanRemoval = true)
   @NonNull
   @JsonManagedReference
   private List<ExerciseOption> exerciseOptions;

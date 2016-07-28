@@ -1,6 +1,7 @@
 package com.zalude.spac.fusion.repositories;
 
 import com.zalude.spac.fusion.models.domain.ExerciseOption;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -16,11 +17,11 @@ import java.util.UUID;
  * @author Andrew Zurn (azurn)
  */
 @Repository
-public interface ExerciseOptionRepository extends PagingAndSortingRepository<ExerciseOption, UUID> {
+public interface ExerciseOptionRepository extends JpaRepository<ExerciseOption, UUID> {
 
-    List<ExerciseOption> findByExerciseId(UUID exerciseId);
+  List<ExerciseOption> findByExerciseId(UUID exerciseId);
 
-    List<ExerciseOption> findByNameAndExerciseIdNot(String name, UUID exerciseId);
+  List<ExerciseOption> findByNameAndExerciseIdNot(String name, UUID exerciseId);
 
-    List<ExerciseOption> findByName(String name);
+  List<ExerciseOption> findByName(String name);
 }

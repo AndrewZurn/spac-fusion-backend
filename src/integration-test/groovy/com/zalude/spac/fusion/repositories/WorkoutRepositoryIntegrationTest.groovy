@@ -16,12 +16,16 @@ public class WorkoutRepositoryIntegrationTest extends RepositoryIntegrationTestB
     @Inject
     private WorkoutRepository workoutRepository
 
+    @Inject
+    private ExerciseRepository exerciseRepository
+
     void setup() {
+        exerciseRepository.save(testExercise)
         workoutRepository.save(testWorkout)
     }
 
     void cleanup() {
-        workoutRepository.deleteAll()
+        workoutRepository.deleteAllInBatch()
     }
 
     def "find an empty list of workouts"() {

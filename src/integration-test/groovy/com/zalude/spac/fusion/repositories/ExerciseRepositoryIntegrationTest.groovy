@@ -17,7 +17,7 @@ public class ExerciseRepositoryIntegrationTest extends RepositoryIntegrationTest
     }
 
     def cleanup() {
-        exerciseRepository.deleteAll()
+        exerciseRepository.deleteAllInBatch()
     }
 
     def "get an empty list of exercises"() {
@@ -40,5 +40,17 @@ public class ExerciseRepositoryIntegrationTest extends RepositoryIntegrationTest
         then:
         exercises.size() == 1
         exercises.getAt(0) == testExercise
+    }
+
+    def "get a list of exercises that match by name and not id"() {
+        given:
+        when:
+        Iterable<Exercise> emptyExercise = exerciseRepository.findByNameAndIdNot(testExercise.name, testExercise.id)
+        Iterable<Exercise> matchingExercise = exerciseRepository.findByNameAndIdNot(testExercise.name, UUID.fromString("02fd700b-5f78-4e4a-aed5-c4a38284082e"))
+
+        then:
+        emptyExercise.size() == 0
+        matchingExercise.size() == 1
+        matchingExercise.get(0) == testExercise
     }
 }

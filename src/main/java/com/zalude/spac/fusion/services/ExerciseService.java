@@ -24,13 +24,11 @@ import java.util.stream.Collectors;
 @Service
 public class ExerciseService {
 
-  private
   @NonNull
-  ExerciseRepository exerciseRepository;
+  private ExerciseRepository exerciseRepository;
 
-  private
   @NotNull
-  ExerciseOptionRepository exerciseOptionRepository;
+  private ExerciseOptionRepository exerciseOptionRepository;
 
   @Inject
   public ExerciseService(ExerciseRepository exerciseRepository, ExerciseOptionRepository exerciseOptionRepository) {
@@ -67,6 +65,10 @@ public class ExerciseService {
     existingExercise.setDescription(exercise.getDescription());
 
     return this.exerciseRepository.save(existingExercise);
+  }
+
+  public Optional<ExerciseOption> findExerciseOption(UUID exerciseOptionId) {
+    return Optional.ofNullable(exerciseOptionRepository.findOne(exerciseOptionId));
   }
 
   private void validateExerciseOptions(List<ExerciseOption> exerciseOptions) throws ResourceNotFoundException, ResourceValidationException {

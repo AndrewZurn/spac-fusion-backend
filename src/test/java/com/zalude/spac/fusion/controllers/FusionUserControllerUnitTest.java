@@ -11,6 +11,4 @@ public class FusionUserControllerUnitTest {
     @Mock
     private UserService userService;
 
-    private UserController userController = new UserController(userService);
-
 }

@@ -1,4 +1,4 @@
-package com.zalude.spac.fusion.models.response;
+package com.zalude.spac.fusion.models.response.error;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

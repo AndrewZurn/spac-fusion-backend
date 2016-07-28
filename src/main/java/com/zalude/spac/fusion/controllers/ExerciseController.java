@@ -7,8 +7,8 @@ import com.zalude.spac.fusion.models.domain.ExerciseOption;
 import com.zalude.spac.fusion.models.domain.Workout;
 import com.zalude.spac.fusion.models.request.CreateOrUpdateExerciseOptionRequest;
 import com.zalude.spac.fusion.models.request.CreateOrUpdateExerciseRequest;
-import com.zalude.spac.fusion.models.response.BadRequestResponse;
-import com.zalude.spac.fusion.models.response.ResourceNotFoundResponse;
+import com.zalude.spac.fusion.models.response.error.BadRequestResponse;
+import com.zalude.spac.fusion.models.response.error.ResourceNotFoundResponse;
 import com.zalude.spac.fusion.services.ExerciseService;
 import lombok.NonNull;
 import lombok.val;
@@ -41,13 +41,11 @@ public class ExerciseController {
   }
 
   @RequestMapping(method = GET)
-  @ResponseBody
   public ResponseEntity<Iterator<Workout>> getAllExercises() {
     return new ResponseEntity(exerciseService.findAllExercises(), HttpStatus.OK);
   }
 
   @RequestMapping(method = GET, value = "/{exerciseId}")
-  @ResponseBody
   public ResponseEntity getExercises(@PathVariable UUID exerciseId) {
     val exercise = exerciseService.findExercise(exerciseId);
     if (exercise.isPresent()) {
@@ -58,14 +56,12 @@ public class ExerciseController {
   }
 
   @RequestMapping(method = POST)
-  @ResponseBody
   public ResponseEntity createExercise(@RequestBody @Valid CreateOrUpdateExerciseRequest exerciseRequest) {
     val exercise = toDomain(exerciseRequest, UUID.randomUUID());
     return createOrUpdateExercise(exercise, false);
   }
 
   @RequestMapping(method = PUT, value = "/{exerciseId}")
-  @ResponseBody
   public ResponseEntity updateExercise(@PathVariable UUID exerciseId,
                                        @RequestBody @Valid CreateOrUpdateExerciseRequest exerciseRequest) {
     val exercise = toDomain(exerciseRequest, exerciseId);
@@ -84,7 +80,7 @@ public class ExerciseController {
         successStatus = HttpStatus.CREATED;
       }
     } catch (ResourceNotFoundException e) {
-      return new ResponseEntity(new ResourceNotFoundResponse(e.getId(), e.getMessage()), HttpStatus.NOT_FOUND);
+      return new ResponseEntity(new ResourceNotFoundResponse(e.getId()), HttpStatus.NOT_FOUND);
     } catch (ResourceValidationException e) {
       return new ResponseEntity(new BadRequestResponse(e.getErrorsById(), e.getErrorsByName(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }
@@ -103,22 +99,31 @@ public class ExerciseController {
   }
 
   private ExerciseOption toDomain(CreateOrUpdateExerciseOptionRequest exerciseOptionRequest, Exercise exercise, UUID exerciseOptionId) {
-    val exerciseOption = new ExerciseOption(exerciseOptionRequest.getName(),
+    UUID exericeOptionIdToUse;
+    if (exerciseOptionId != null) {
+      exericeOptionIdToUse = exerciseOptionId;
+    } else {
+      exericeOptionIdToUse = exerciseOptionRequest.getId();
+    }
+
+    val exerciseOption = new ExerciseOption(exericeOptionIdToUse, exerciseOptionRequest.getName(),
         exerciseOptionRequest.getType(), exerciseOptionRequest.getTargetAmount());
 
-    if (exerciseOptionId != null) {
-      exerciseOption.setId(exerciseOptionId);
-    } else {
-      exerciseOption.setId(exerciseOptionRequest.getId());
-    }
     exerciseOption.setDescription(exerciseOptionRequest.getDescription());
     exerciseOption.setExercise(exercise);
 
     val alternativeOptionRequest = exerciseOptionRequest.getAlternativeExerciseOption();
     ExerciseOption alternativeExerciseOption = null;
     if (alternativeOptionRequest != null) {
-        alternativeExerciseOption = new ExerciseOption(alternativeOptionRequest.getName(), alternativeOptionRequest.getType(),
-            alternativeOptionRequest.getTargetAmount());
+      UUID alternateExerciseOptionId;
+      if (alternativeOptionRequest.getId() != null) {
+        alternateExerciseOptionId = alternativeOptionRequest.getId();
+      } else {
+        alternateExerciseOptionId = UUID.randomUUID();
+      }
+
+      alternativeExerciseOption = new ExerciseOption(alternateExerciseOptionId, alternativeOptionRequest.getName(),
+          alternativeOptionRequest.getType(), alternativeOptionRequest.getTargetAmount());
     }
     exerciseOption.setAlternativeForExerciseOption(alternativeExerciseOption);
 

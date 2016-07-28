@@ -31,7 +31,8 @@ public class UserRepositoryIntegrationTest extends RepositoryIntegrationTestBase
     }
 
     void cleanup() {
-        userRepository.delete(testFusionUser)
+        userRepository.deleteAllInBatch()
+        exerciseRepository.deleteAllInBatch()
     }
 
     def "find an empty list of user"() {

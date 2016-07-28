@@ -90,11 +90,6 @@ databaseChangeLog:
                     constraints:
                       nullable: false
                 - column:
-                    name: "password"
-                    type: "varchar(60)"
-                    constraints:
-                      nullable: false
-                - column:
                     name: "email"
                     type: "text"
                     constraints:
@@ -106,6 +101,11 @@ databaseChangeLog:
                       nullable: false
                 - column:
                     name: "height"
+                    type: "double precision"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "weight"
                     type: "double precision"
                     constraints:
                       nullable: false
@@ -141,6 +141,11 @@ databaseChangeLog:
                     constraints:
                       nullable: false
                 - column:
+                    name: "workout_id"
+                    type: "uuid"
+                    constraints:
+                      nullable: false
+                - column:
                     name: "amount_completed"
                     type: "text"
                     constraints:
@@ -171,31 +176,3 @@ databaseChangeLog:
                     type: "uuid"
                     constraints:
                       nullable: false
-    - changeSet:
-        id: "000-add-foreign-keys"
-        author: "azurn"
-        changes:
-        - addForeignKeyConstraint:
-            constraintName: fk_exercise_option_to_exercise
-            baseTableName: exercise_option
-            baseColumnNames: exercise_id
-            referencedTableName: exercise
-            referencedColumnNames: id
-        - addForeignKeyConstraint:
-            constraintName: fk_exercise_option_parent
-            baseTableName: exercise_option
-            baseColumnNames: alternative_for_exercise_option_id
-            referencedTableName: exercise_option
-            referencedColumnNames: id
-        - addForeignKeyConstraint:
-            constraintName: fk_user_exercise_option_lookup_to_exercise_option
-            baseTableName: user_exercise_option_lookup
-            baseColumnNames: exercise_option_id
-            referencedTableName: exercise_option
-            referencedColumnNames: id
-        - addForeignKeyConstraint:
-            constraintName: fk_workout_to_exercise
-            baseTableName: workout
-            baseColumnNames: exercise_id
-            referencedTableName: exercise
-            referencedColumnNames: id

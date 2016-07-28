@@ -26,33 +26,33 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExerciseOption {
 
-    @Id
-    @Type(type="pg-uuid")
-    @GenericGenerator(name = "uuid-gen", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid-gen")
-    private UUID id;
+  @Id
+  @Type(type = "pg-uuid")
+  @NonNull
+  private UUID id;
 
-    @NonNull
-    private String name;
+  @NonNull
+  private String name;
 
-    private String description;
+  private String description;
 
-    @NonNull
-    private String type;
+  @NonNull
+  private String type;
 
-    @NonNull
-    private String targetAmount;
+  @NonNull
+  private String targetAmount;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "alternative_for_exercise_option_id")
-    private ExerciseOption alternativeForExerciseOption;
+  @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @JoinColumn(name = "alternative_for_exercise_option_id")
+  private ExerciseOption alternativeForExerciseOption;
 
-    @ManyToOne
-    @JoinColumn(name = "exercise_id")
-    @JsonBackReference
-    private Exercise exercise;
+  @ManyToOne
+  @JoinColumn(name = "exercise_id")
+  @JsonBackReference
+  private Exercise exercise;
 
-    @Tolerate
-    ExerciseOption() {}
+  @Tolerate
+  ExerciseOption() {
+  }
 
 }

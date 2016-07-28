@@ -1,4 +1,4 @@
-package com.zalude.spac.fusion.models.response;
+package com.zalude.spac.fusion.models.response.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +17,4 @@ public class ResourceNotFoundResponse {
 
     @NotNull
     private UUID id;
-
-    @NotNull
-    private String message;
 }

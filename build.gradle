@@ -51,7 +51,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.boot:spring-boot-actuator-docs')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile('org.projectlombok:lombok:1.16.6')
+    compile('org.projectlombok:lombok:1.16.10')
     compile('org.springframework.retry:spring-retry')
     compile('org.springframework.boot:spring-boot-starter-social-facebook')
     compile('org.springframework.boot:spring-boot-starter-websocket')
@@ -59,6 +59,7 @@ dependencies {
     compile "org.functionaljava:functionaljava-java8:4.6"
     compile "org.functionaljava:functionaljava-quickcheck:4.6"
     compile "org.functionaljava:functionaljava-java-core:4.6"
+    compile 'org.javatuples:javatuples:1.2'
     runtime('org.postgresql:postgresql')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.3'

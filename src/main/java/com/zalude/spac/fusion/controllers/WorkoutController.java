@@ -3,7 +3,7 @@ package com.zalude.spac.fusion.controllers;
 import com.zalude.spac.fusion.exceptions.ResourceValidationException;
 import com.zalude.spac.fusion.models.domain.Workout;
 import com.zalude.spac.fusion.models.request.CreateOrUpdateWorkoutRequest;
-import com.zalude.spac.fusion.models.response.BadRequestResponse;
+import com.zalude.spac.fusion.models.response.error.BadRequestResponse;
 import com.zalude.spac.fusion.services.ExerciseService;
 import com.zalude.spac.fusion.services.WorkoutService;
 import lombok.NonNull;

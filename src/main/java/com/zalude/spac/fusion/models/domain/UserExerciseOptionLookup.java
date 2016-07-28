@@ -22,24 +22,30 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserExerciseOptionLookup {
 
-    @Id
-    @Type(type = "pg-uuid")
-    @NonNull
-    private UUID id;
+  @Id
+  @Type(type = "pg-uuid")
+  @NonNull
+  private UUID id;
 
-    @NonNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private FusionUser user;
+  @NonNull
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private FusionUser user;
 
-    @NonNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exercise_option_id")
-    private ExerciseOption exerciseOption;
+  @NonNull
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "exercise_option_id")
+  private ExerciseOption exerciseOption;
 
-    @NonNull
-    private String amountCompleted;
+  @NonNull
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "workout_id")
+  private Workout workout;
 
-    @Tolerate
-    public UserExerciseOptionLookup() {}
+  @NonNull
+  private String amountCompleted;
+
+  @Tolerate
+  public UserExerciseOptionLookup() {
+  }
 }
