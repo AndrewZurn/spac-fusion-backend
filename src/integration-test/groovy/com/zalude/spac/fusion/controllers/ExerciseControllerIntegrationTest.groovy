@@ -1,19 +1,18 @@
 package com.zalude.spac.fusion.controllers
 
 import com.zalude.spac.fusion.IntegrationTestData;
-import com.zalude.spac.fusion.ControllerIntegrationTestBase
+import com.zalude.spac.fusion.ControllerTestBase
 import com.zalude.spac.fusion.models.domain.Exercise
 import com.zalude.spac.fusion.models.request.CreateOrUpdateExerciseOptionRequest
 import com.zalude.spac.fusion.models.request.CreateOrUpdateExerciseRequest
 import com.zalude.spac.fusion.repositories.ExerciseRepository
-import groovy.transform.CompileStatic
 import org.springframework.http.HttpEntity
 import org.springframework.http.ResponseEntity
 
 import javax.inject.Inject
 import java.util.stream.Collectors
 
-class ExerciseControllerIntegrationTest extends ControllerIntegrationTestBase implements IntegrationTestData {
+class ExerciseControllerIntegrationTest extends ControllerTestBase implements IntegrationTestData {
 
     String getBasePath() { "/exercises" }
 
@@ -27,8 +26,10 @@ class ExerciseControllerIntegrationTest extends ControllerIntegrationTestBase im
         exerciseRepository.save(testExercise)
 
         createExerciseOptions = testExerciseOptionsList.stream().map { option ->
-            def alternativeOption = new CreateOrUpdateExerciseOptionRequest(null, "Modified: ${option.name}", "Modified ${option.description}", option.type, option.targetAmount, null)
-            new CreateOrUpdateExerciseOptionRequest(null, option.name, option.description, option.type, option.targetAmount, alternativeOption)
+            def alternativeOption = new CreateOrUpdateExerciseOptionRequest(UUID.randomUUID(),
+                    "Modified: ${option.name}", "Modified ${option.description}", option.type, option.targetAmount, null)
+            new CreateOrUpdateExerciseOptionRequest(UUID.randomUUID(), option.name,
+                    option.description, option.type, option.targetAmount, alternativeOption)
         }.collect(Collectors.toList())
 
         createExerciseRequestBody = new CreateOrUpdateExerciseRequest("New Pushup Routine", "Now get on the ground!", createExerciseOptions)
@@ -78,8 +79,8 @@ class ExerciseControllerIntegrationTest extends ControllerIntegrationTestBase im
         createExerciseResult.body.exerciseOptions.size() == createExerciseOptions.size()
         createExerciseResult.body.exerciseOptions.forEach { option ->
             option.name in createExerciseOptionRequestNames
-            option.alternativeForExerciseOption.name == "Modified: ${option.name}"
-            option.alternativeForExerciseOption.description == "Modified: ${option.description}"
+            option.alternativeExerciseOption.name == "Modified: ${option.name}"
+            option.alternativeExerciseOption.description == "Modified: ${option.description}"
         }
     }
 

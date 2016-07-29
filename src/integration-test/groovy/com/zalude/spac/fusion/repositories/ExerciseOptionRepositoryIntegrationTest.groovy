@@ -1,12 +1,12 @@
 package com.zalude.spac.fusion.repositories
 
 import com.zalude.spac.fusion.IntegrationTestData
-import com.zalude.spac.fusion.RepositoryIntegrationTestBase
+import com.zalude.spac.fusion.RepositoryTestBase
 import com.zalude.spac.fusion.models.domain.ExerciseOption
 
 import javax.inject.Inject
 
-class ExerciseOptionRepositoryIntegrationTest extends RepositoryIntegrationTestBase implements IntegrationTestData {
+class ExerciseOptionRepositoryIntegrationTest extends RepositoryTestBase implements IntegrationTestData {
 
     @Inject
     ExerciseRepository exerciseRepository
@@ -36,7 +36,7 @@ class ExerciseOptionRepositoryIntegrationTest extends RepositoryIntegrationTestB
 
     def "save a new exercise option to an exercise"() {
         given:
-        def newOption = new ExerciseOption("New Name", "Reps", "50")
+        def newOption = new ExerciseOption(UUID.fromString("2e6d247c-c50e-403d-8a0a-6059000a267c"), "New Name", "Reps", "50")
         newOption.description = "Some new description"
         newOption.exercise = testExercise
         testExercise.exerciseOptions += testExercise

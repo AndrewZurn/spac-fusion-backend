@@ -1,15 +1,17 @@
 package com.zalude.spac.fusion.models.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.Tolerate;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Contains the information about a given option of an @see com.zalude.spac.models.domain.Exercise, such as
@@ -22,7 +24,7 @@ import java.util.UUID;
 @Setter
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = "exercise")
+@ToString(exclude = {"exercise", "alternativeExerciseOption", "children"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExerciseOption {
 
@@ -42,9 +44,9 @@ public class ExerciseOption {
   @NonNull
   private String targetAmount;
 
-  @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-  @JoinColumn(name = "alternative_for_exercise_option_id")
-  private ExerciseOption alternativeForExerciseOption;
+  @OneToOne(cascade=CascadeType.ALL)
+  @JoinColumn(name="alternative_exercise_option_id")
+  private ExerciseOption alternativeExerciseOption;
 
   @ManyToOne
   @JoinColumn(name = "exercise_id")

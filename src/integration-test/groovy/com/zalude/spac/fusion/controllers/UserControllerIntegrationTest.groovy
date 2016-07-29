@@ -1,6 +1,6 @@
 package com.zalude.spac.fusion.controllers
 
-import com.zalude.spac.fusion.ControllerIntegrationTestBase
+import com.zalude.spac.fusion.ControllerTestBase
 import com.zalude.spac.fusion.IntegrationTestData
 import com.zalude.spac.fusion.models.domain.FusionUser
 import com.zalude.spac.fusion.models.request.CreateUserRequest
@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus
 
 import javax.inject.Inject;
 
-public class UserControllerIntegrationTest extends ControllerIntegrationTestBase implements IntegrationTestData {
+public class UserControllerIntegrationTest extends ControllerTestBase implements IntegrationTestData {
 
     @Inject
     private UserRepository userRepository
@@ -200,7 +200,7 @@ public class UserControllerIntegrationTest extends ControllerIntegrationTestBase
         result.statusCode == HttpStatus.NO_CONTENT
         findResult.statusCode == HttpStatus.OK
         userCompletedWorkout.results.find {
-            it.exerciseOptionId == testUserExerciseOptionLookup.id
+            it.exerciseOptionId == testUserExerciseOptionLookup.exerciseOption.id
         }.amountCompleted == newAmountCompleted
     }
 }

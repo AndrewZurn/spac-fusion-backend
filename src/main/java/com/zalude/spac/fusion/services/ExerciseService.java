@@ -51,8 +51,10 @@ public class ExerciseService {
   public Exercise create(Exercise exercise) throws ResourceNotFoundException, ResourceValidationException {
     validateExercise(exercise);
     validateExerciseOptions(exercise.getExerciseOptions());
+
     return this.exerciseRepository.save(exercise);
   }
+
 
   public Exercise update(Exercise exercise) throws ResourceNotFoundException, ResourceValidationException {
     validateExercise(exercise);

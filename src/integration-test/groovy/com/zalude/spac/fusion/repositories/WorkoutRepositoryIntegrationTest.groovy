@@ -1,7 +1,7 @@
 package com.zalude.spac.fusion.repositories
 
 import com.zalude.spac.fusion.IntegrationTestData
-import com.zalude.spac.fusion.RepositoryIntegrationTestBase
+import com.zalude.spac.fusion.RepositoryTestBase
 import org.springframework.transaction.annotation.Transactional
 
 import javax.inject.Inject;
@@ -11,7 +11,7 @@ import javax.inject.Inject;
  *
  * @author Andrew Zurn (azurn)
  */
-public class WorkoutRepositoryIntegrationTest extends RepositoryIntegrationTestBase implements IntegrationTestData {
+public class WorkoutRepositoryIntegrationTest extends RepositoryTestBase implements IntegrationTestData {
 
     @Inject
     private WorkoutRepository workoutRepository

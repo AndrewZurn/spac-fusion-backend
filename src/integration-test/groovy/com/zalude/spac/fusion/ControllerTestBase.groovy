@@ -14,7 +14,7 @@ import spock.lang.Stepwise;
 @Stepwise
 @WebIntegrationTest
 @ContextConfiguration(loader = SpringApplicationContextLoader.class, classes = [SpacFusionApplication.class] )
-class ControllerIntegrationTestBase extends Specification {
+class ControllerTestBase extends Specification {
 
     @Value('${local.server.port}') int port
     RestTemplate restTemplate

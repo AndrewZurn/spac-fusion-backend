@@ -1,6 +1,7 @@
 package com.zalude.spac.fusion.repositories;
 
 import com.zalude.spac.fusion.models.domain.UserExerciseOptionLookup;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -17,7 +18,7 @@ import java.util.UUID;
  * @author Andrew Zurn (azurn)
  */
 @Repository
-public interface UserExerciseOptionLookupRepository extends PagingAndSortingRepository<UserExerciseOptionLookup, UUID> {
+public interface UserExerciseOptionLookupRepository extends JpaRepository<UserExerciseOptionLookup, UUID> {
 
   @Modifying
   @Transactional

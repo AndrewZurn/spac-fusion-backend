@@ -1,12 +1,12 @@
 package com.zalude.spac.fusion.repositories
 
 import com.zalude.spac.fusion.IntegrationTestData
-import com.zalude.spac.fusion.RepositoryIntegrationTestBase
+import com.zalude.spac.fusion.RepositoryTestBase
 import org.springframework.transaction.annotation.Transactional
 
 import javax.inject.Inject
 
-public class UserRepositoryIntegrationTest extends RepositoryIntegrationTestBase implements IntegrationTestData {
+public class UserRepositoryIntegrationTest extends RepositoryTestBase implements IntegrationTestData {
 
     @Inject
     private UserRepository userRepository
@@ -59,9 +59,11 @@ public class UserRepositoryIntegrationTest extends RepositoryIntegrationTestBase
         user.userExerciseOptionLookups == testFusionUser.userExerciseOptionLookups
     }
 
+    @Transactional
     def "get an empty list of user exercise option lookups"() {
         given:
-        userRepository.delete(testFusionUser)
+        userRepository.deleteAllInBatch()
+        userExerciseOptionLookupRepository.deleteAllInBatch()
 
         when:
         def lookups = userExerciseOptionLookupRepository.findAll()

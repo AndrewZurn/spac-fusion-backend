@@ -58,7 +58,7 @@ databaseChangeLog:
                     constraints:
                       nullable: false
                 - column:
-                    name: "alternative_for_exercise_option_id"
+                    name: "alternative_exercise_option_id"
                     type: "uuid"
                 - column:
                     name: "exercise_id"

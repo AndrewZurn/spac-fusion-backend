@@ -125,7 +125,7 @@ public class ExerciseController {
       alternativeExerciseOption = new ExerciseOption(alternateExerciseOptionId, alternativeOptionRequest.getName(),
           alternativeOptionRequest.getType(), alternativeOptionRequest.getTargetAmount());
     }
-    exerciseOption.setAlternativeForExerciseOption(alternativeExerciseOption);
+    exerciseOption.setAlternativeExerciseOption(alternativeExerciseOption); // set the child
 
     return exerciseOption;
   }
