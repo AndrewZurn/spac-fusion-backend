@@ -2,6 +2,7 @@ package com.zalude.spac.fusion.services;
 
 import com.zalude.spac.fusion.repositories.UserExerciseOptionLookupRepository;
 import com.zalude.spac.fusion.repositories.UserRepository;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -9,12 +10,17 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class FusionUserServiceUnitTest {
 
-    @Mock
-    private UserExerciseOptionLookupRepository userExerciseOptionLookupRepository;
+  @Mock
+  private UserExerciseOptionLookupRepository userExerciseOptionLookupRepository;
 
-    @Mock
-    private UserRepository userRepository;
+  @Mock
+  private UserRepository userRepository;
 
-    private UserService userService = new UserService(userExerciseOptionLookupRepository, userRepository);
+  private UserService userService = new UserService(userExerciseOptionLookupRepository, userRepository);
+
+  @Test
+  public void doSomething() throws Exception {
+
+  }
 
 }
