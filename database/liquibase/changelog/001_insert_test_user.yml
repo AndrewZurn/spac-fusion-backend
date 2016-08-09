@@ -1,0 +1,39 @@
+databaseChangeLog:
+    - changeSet:
+        id: 001_insert_test_user.yml
+        author: azurn
+        changes:
+        - insert:
+            schemaName: public
+            tableName: fusion_user
+            columns:
+            - column:
+                name: id
+                value: ba729f5c-9781-4d88-bca7-f5098930eff7
+            - column:
+                name: first_name
+                value: Billy
+            - column:
+                name: last_name
+                value: Bob
+            - column:
+                name: username
+                value: bilbob
+            - column:
+                name: email
+                value: b.bob@gmail.com
+            - column:
+                name: age
+                value: 45
+            - column:
+                name: height
+                value: 6.5
+            - column:
+                name: weight
+                value: 211.52
+            - column:
+                name: program_level
+                value: 1
+            - column:
+                name: active_status
+                value: true

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,4 +30,11 @@ public interface UserExerciseOptionLookupRepository extends JpaRepository<UserEx
   Iterable<UserExerciseOptionLookup> findAllByUserId(UUID userId);
 
   Iterable<UserExerciseOptionLookup> findAllByUserIdAndWorkoutId(UUID userId, UUID workoutId);
+
+  @Query("SELECT u FROM UserExerciseOptionLookup u " +
+      "WHERE u.workout.workoutDate BETWEEN :startOfWeek AND :endOfWeek " +
+      "AND u.user.id = :userId")
+  Iterable<UserExerciseOptionLookup> findAllByUserIdForWeek(@Param("userId") UUID userId,
+                                                            @Param("startOfWeek") LocalDate startOfWeek,
+                                                            @Param("endOfWeek") LocalDate endOfWeek);
 }

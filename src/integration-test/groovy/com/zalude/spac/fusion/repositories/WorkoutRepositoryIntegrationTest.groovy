@@ -4,13 +4,10 @@ import com.zalude.spac.fusion.IntegrationTestData
 import com.zalude.spac.fusion.RepositoryTestBase
 import org.springframework.transaction.annotation.Transactional
 
-import javax.inject.Inject;
+import javax.inject.Inject
+import java.time.LocalDate
+import java.time.LocalDateTime;
 
-/**
- * TODO: DESCRIPTION OF CLASS HERE
- *
- * @author Andrew Zurn (azurn)
- */
 public class WorkoutRepositoryIntegrationTest extends RepositoryTestBase implements IntegrationTestData {
 
     @Inject
@@ -50,4 +47,12 @@ public class WorkoutRepositoryIntegrationTest extends RepositoryTestBase impleme
         workouts.getAt(0) == testWorkout
     }
 
+    def "find today's workout"() {
+        given:
+        when:
+        def todaysWorkout = workoutRepository.findTodaysWorkout()
+
+        then:
+        todaysWorkout.workoutDate == LocalDate.now()
+    }
 }

@@ -7,6 +7,7 @@ import com.zalude.spac.fusion.models.domain.FusionUser;
 import com.zalude.spac.fusion.models.domain.UserExerciseOptionLookup;
 import com.zalude.spac.fusion.models.domain.Workout;
 import com.zalude.spac.fusion.models.request.*;
+import com.zalude.spac.fusion.models.response.UserCanUnlockWorkoutResponse;
 import com.zalude.spac.fusion.models.response.UserCompletedWorkoutResponse;
 import com.zalude.spac.fusion.models.response.error.ResourceNotFoundResponse;
 import com.zalude.spac.fusion.services.ExerciseService;
@@ -51,13 +52,11 @@ public class UserController {
     this.workoutService = workoutService;
   }
 
-  // GET USERS
   @RequestMapping(method = RequestMethod.GET)
   public ResponseEntity<Iterable<FusionUser>> getUsers() {
     return new ResponseEntity(userService.findAllUsers(), HttpStatus.OK);
   }
 
-  // GET USER
   @RequestMapping(method = RequestMethod.GET, value = "/{userId}")
   public ResponseEntity<FusionUser> getUser(@PathVariable UUID userId) {
     val user = userService.find(userId);
@@ -68,13 +67,20 @@ public class UserController {
     }
   }
 
-  // CREATE USER
+  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/can-unlock-workout")
+  public ResponseEntity canUserUnlockWorkout(@PathVariable UUID userId) {
+    return userService.canUserUnlockWorkout(userId)
+        .map(result -> new ResponseEntity(
+            new UserCanUnlockWorkoutResponse(userId, result.getValue0(), result.getValue1().size(), result.getValue2().getWorkoutLimit()),
+            HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity(HttpStatus.NOT_FOUND));
+  }
+
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<FusionUser> createUser(@RequestBody @Valid CreateUserRequest userRequest) {
     return createOrUpdateUser(userRequest, Optional.empty());
   }
 
-  // UPDATE USER
   @RequestMapping(method = RequestMethod.PUT, value = "/{userId}")
   public ResponseEntity<FusionUser> updateUser(@PathVariable UUID userId,
                                                @RequestBody @Valid UpdateUserRequest userRequest) {

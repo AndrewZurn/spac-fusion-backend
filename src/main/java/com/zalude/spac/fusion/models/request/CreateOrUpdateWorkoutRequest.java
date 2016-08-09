@@ -2,7 +2,7 @@ package com.zalude.spac.fusion.models.request;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -23,5 +23,5 @@ public class CreateOrUpdateWorkoutRequest {
   private String duration;
 
   @NonNull
-  private LocalDateTime workoutDate;
+  private LocalDate workoutDate;
 }

@@ -12,10 +12,7 @@ public class WorkoutServiceUnitTest {
   @Mock
   private WorkoutRepository workoutRepository;
 
-  @Mock
-  private ExerciseService exerciseService;
-
-  private WorkoutService workoutService = new WorkoutService(workoutRepository, exerciseService);
+  private WorkoutService workoutService = new WorkoutService(workoutRepository);
 
   @Test
   public void doSomething() throws Exception {

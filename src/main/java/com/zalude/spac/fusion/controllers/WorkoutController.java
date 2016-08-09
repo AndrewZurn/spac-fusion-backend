@@ -50,12 +50,12 @@ public class WorkoutController {
 
   @RequestMapping(method = GET, value = "/{workoutId}")
   public ResponseEntity getWorkout(@PathVariable UUID workoutId) {
-    val workout = this.workoutService.findWorkout(workoutId);
-    if (workout.isPresent()) {
-      return new ResponseEntity(workout.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity(HttpStatus.NOT_FOUND);
-    }
+    return returnWorkoutIfFound(this.workoutService.findWorkout(workoutId));
+  }
+
+  @RequestMapping(method = GET, value = "/today")
+  public ResponseEntity getTodaysWorkout() {
+    return returnWorkoutIfFound(this.workoutService.findTodaysWorkout());
   }
 
   @RequestMapping(method = POST)
@@ -86,6 +86,14 @@ public class WorkoutController {
       return new ResponseEntity(savedWorkout, successStatus);
     } catch (ResourceValidationException e) {
       return new ResponseEntity(new BadRequestResponse(e.getErrorsById(), e.getErrorsByName(), e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  private ResponseEntity returnWorkoutIfFound(Optional<Workout> workout) {
+    if (workout.isPresent()) {
+      return new ResponseEntity(workout.get(), HttpStatus.OK);
+    } else {
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
   }
 

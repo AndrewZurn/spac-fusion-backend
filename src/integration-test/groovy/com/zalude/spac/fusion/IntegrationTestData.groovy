@@ -8,7 +8,7 @@ import com.zalude.spac.fusion.models.domain.Workout
 import groovy.transform.CompileStatic
 import org.junit.Before
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 trait IntegrationTestData {
 
@@ -35,7 +35,7 @@ trait IntegrationTestData {
         this.testExerciseOptionsList = this.testExerciseOptionsList.each { it -> it.exercise = testExercise } as List
         this.testExercise.exerciseOptions = this.testExerciseOptionsList
 
-        this.testWorkout = new Workout(UUID.fromString("6ded447d-5bb3-4198-9df4-8b62a099faeb"), "20 Minutes", LocalDateTime.now(), testExercise)
+        this.testWorkout = new Workout(UUID.fromString("6ded447d-5bb3-4198-9df4-8b62a099faeb"), "20 Minutes", LocalDate.now(), testExercise)
 
         this.testFusionUser = new FusionUser(UUID.fromString("e7e0416d-6f2b-4c85-8002-b6b8d55c127d"), "Andrew", "Zurn",
                 "andrew.zurn", "andrew.zurn@email.com", 24, 6.5, 215.5, 1, true)

@@ -22,26 +22,24 @@ import java.util.UUID;
 @Service
 public class WorkoutService {
 
-  private
-  @NonNull
-  WorkoutRepository workoutRepository;
-
-  private
   @NotNull
-  ExerciseService exerciseService;
+  private WorkoutRepository workoutRepository;
 
   @Inject
-  public WorkoutService(WorkoutRepository workoutRepository, ExerciseService exerciseService) {
+  public WorkoutService(WorkoutRepository workoutRepository) {
     this.workoutRepository = workoutRepository;
-    this.exerciseService = exerciseService;
+  }
+
+  public Iterable<Workout> findAllWorkouts() {
+    return this.workoutRepository.findAll();
   }
 
   public Optional<Workout> findWorkout(UUID id) {
     return Optional.ofNullable(this.workoutRepository.findOne(id));
   }
 
-  public Iterable<Workout> findAllWorkouts() {
-    return this.workoutRepository.findAll();
+  public Optional<Workout> findTodaysWorkout() {
+    return Optional.ofNullable(this.workoutRepository.findTodaysWorkout());
   }
 
   public Workout create(Workout workout) {

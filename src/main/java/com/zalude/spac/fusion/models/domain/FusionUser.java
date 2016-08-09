@@ -62,18 +62,23 @@ public class FusionUser {
   @JsonIgnore
   private List<UserExerciseOptionLookup> userExerciseOptionLookups;
 
+  @Getter
   public enum ProgramLevel {
-    GOLD(2, "Gold"), SILVER(1, "Silver"), BRONZE(0, "Bronze");
+    GOLD(2, "Gold", 6),
+    SILVER(1, "Silver", 4),
+    BRONZE(0, "Bronze", 2);
 
     private int level;
     private String name;
+    private int workoutLimit;
 
-    private ProgramLevel(int level, String name) {
+    private ProgramLevel(int level, String name, int workoutLimit) {
       this.level = level;
       this.name = name;
+      this.workoutLimit = workoutLimit;
     }
 
-    public ProgramLevel fromValue(int level) {
+    public static ProgramLevel fromValue(int level) {
       switch (level) {
         case 0:
           return ProgramLevel.BRONZE;

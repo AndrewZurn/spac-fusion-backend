@@ -8,13 +8,17 @@ import com.zalude.spac.fusion.repositories.UserExerciseOptionLookupRepository;
 import com.zalude.spac.fusion.repositories.UserRepository;
 import lombok.NonNull;
 import lombok.val;
+import org.javatuples.Pair;
+import org.javatuples.Triplet;
+import org.javatuples.Tuple;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * TODO: DESCRIPTION OF CLASS HERE
@@ -88,6 +92,18 @@ public class UserService {
     userExerciseOptionLookupRepository.updateLookup(userExerciseOptionLookupId, amountCompleted);
     val lookup = userExerciseOptionLookupRepository.findOne(userExerciseOptionLookupId);
     return lookup.getAmountCompleted().equals(amountCompleted);
+  }
+
+  public Optional<Triplet<Boolean, List<UserExerciseOptionLookup>, FusionUser.ProgramLevel>> canUserUnlockWorkout(UUID userId) {
+    return find(userId).map(fusionUser -> {
+      LocalDate startOfWeek = LocalDate.now().with(DayOfWeek.MONDAY);
+      LocalDate endOfWeek = LocalDate.now().with(DayOfWeek.SUNDAY);
+
+      List<UserExerciseOptionLookup> userCompleteWorkouts = (List<UserExerciseOptionLookup>) userExerciseOptionLookupRepository.findAllByUserIdForWeek(userId, startOfWeek, endOfWeek);
+      FusionUser.ProgramLevel userProgramLevel = FusionUser.ProgramLevel.fromValue(fusionUser.getProgramLevel());
+      boolean canUnlockWorkouts = userCompleteWorkouts.size() < userProgramLevel.getWorkoutLimit();
+      return new Triplet<>(canUnlockWorkouts, userCompleteWorkouts, userProgramLevel);
+    });
   }
 
   private void updateUserInstanceField(FusionUser user, FusionUser existingUser) {

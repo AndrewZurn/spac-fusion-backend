@@ -92,18 +92,19 @@ public class ExerciseController {
     exercise.setId(exerciseId);
 
     val exerciseOptions = exerciseRequest.getExerciseOptions().stream()
-        .map(optionRequest -> toDomain(optionRequest, exercise, optionRequest.getId()))
+        .map(optionRequest -> toDomain(optionRequest, exercise))
         .collect(Collectors.toList());
     exercise.setExerciseOptions(exerciseOptions);
     return exercise;
   }
 
-  private ExerciseOption toDomain(CreateOrUpdateExerciseOptionRequest exerciseOptionRequest, Exercise exercise, UUID exerciseOptionId) {
+  private ExerciseOption toDomain(CreateOrUpdateExerciseOptionRequest exerciseOptionRequest, Exercise exercise) {
     UUID exericeOptionIdToUse;
-    if (exerciseOptionId != null) {
-      exericeOptionIdToUse = exerciseOptionId;
+    val exerciseOptionRequestId = exerciseOptionRequest.getId();
+    if (exerciseOptionRequestId != null) {
+      exericeOptionIdToUse = exerciseOptionRequestId;
     } else {
-      exericeOptionIdToUse = exerciseOptionRequest.getId();
+      exericeOptionIdToUse = UUID.randomUUID();
     }
 
     val exerciseOption = new ExerciseOption(exericeOptionIdToUse, exerciseOptionRequest.getName(),

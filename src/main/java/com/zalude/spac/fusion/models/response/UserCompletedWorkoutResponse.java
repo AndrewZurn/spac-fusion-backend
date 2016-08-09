@@ -2,7 +2,7 @@ package com.zalude.spac.fusion.models.response;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,7 +24,7 @@ public class UserCompletedWorkoutResponse {
   private String duration;
 
   @NonNull
-  private LocalDateTime completedDate;
+  private LocalDate completedDate;
 
   @NonNull
   private UUID exerciseId;
