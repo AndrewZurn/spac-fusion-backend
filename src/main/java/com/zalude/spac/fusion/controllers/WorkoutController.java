@@ -58,6 +58,11 @@ public class WorkoutController {
     return returnWorkoutIfFound(this.workoutService.findTodaysWorkout());
   }
 
+  @RequestMapping(method = GET, value = "/week")
+  public ResponseEntity getThisWeeksWorkouts() {
+    return new ResponseEntity(workoutService.findRemainingWorkoutsForWeek(), HttpStatus.OK);
+  }
+
   @RequestMapping(method = POST)
   public ResponseEntity createWorkout(@RequestBody @Valid CreateOrUpdateWorkoutRequest workoutRequest) {
     return saveOrUpdateWorkout(workoutRequest, Optional.empty());

@@ -4,8 +4,10 @@ import com.zalude.spac.fusion.models.domain.Workout;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -18,4 +20,8 @@ public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
 
   @Query("SELECT w FROM Workout w WHERE w.workoutDate = current_date")
   Workout findTodaysWorkout();
+
+  @Query("SELECT w FROM Workout w WHERE w.workoutDate BETWEEN :dateStartRange AND :dateEndRange")
+  Iterable<Workout> findAllWorkouts(@Param("dateStartRange") LocalDate dateStartRange,
+                                    @Param("dateEndRange") LocalDate dateEndRange);
 }

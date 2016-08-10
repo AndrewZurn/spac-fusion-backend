@@ -8,9 +8,7 @@ import com.zalude.spac.fusion.repositories.UserExerciseOptionLookupRepository;
 import com.zalude.spac.fusion.repositories.UserRepository;
 import lombok.NonNull;
 import lombok.val;
-import org.javatuples.Pair;
 import org.javatuples.Triplet;
-import org.javatuples.Tuple;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;

@@ -25,7 +25,7 @@ import java.util.UUID;
 @EqualsAndHashCode(of = "id")
 @ToString(exclude = "exercise")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Workout {
+public class Workout implements Cloneable {
 
   @Id
   @Type(type = "pg-uuid")

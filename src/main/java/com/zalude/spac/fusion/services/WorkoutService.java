@@ -3,13 +3,13 @@ package com.zalude.spac.fusion.services;
 import com.zalude.spac.fusion.exceptions.ResourceValidationException;
 import com.zalude.spac.fusion.models.domain.Workout;
 import com.zalude.spac.fusion.repositories.WorkoutRepository;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,6 +40,12 @@ public class WorkoutService {
 
   public Optional<Workout> findTodaysWorkout() {
     return Optional.ofNullable(this.workoutRepository.findTodaysWorkout());
+  }
+
+  public Iterable<Workout> findRemainingWorkoutsForWeek() {
+    LocalDate todaysDay = LocalDate.now();
+    LocalDate endOfWeek = LocalDate.now().with(DayOfWeek.SUNDAY);
+    return workoutRepository.findAllWorkouts(todaysDay, endOfWeek);
   }
 
   public Workout create(Workout workout) {
