@@ -2,8 +2,10 @@ To build docker images:
  $ gradle buildDocker
 
 To push docker image to repo:
- $ gradle ???
+ $ docker push awzurn/spac-fusion-api:latest/<TAG>
 
-To run docker images created from this app:
- $ docker run -d -p 8080:8080 --net=host <images_name>
+To run this locally or in dev (on host platform). This will boot up the latest image and a postgres instance.
+  $ docker-compose up (with file for wanted env in current directory).
+
+Liquibase will also need to be run against that envs db.
 
