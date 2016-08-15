@@ -167,7 +167,7 @@ databaseChangeLog:
                       nullable: false
                 - column:
                     name: "workout_date"
-                    type: "timestamp with time zone"
+                    type: "date"
                     constraints:
                       nullable: false
                 - column:

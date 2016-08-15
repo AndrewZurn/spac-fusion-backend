@@ -8,6 +8,7 @@ import com.zalude.spac.fusion.services.ExerciseService;
 import com.zalude.spac.fusion.services.WorkoutService;
 import lombok.NonNull;
 import lombok.val;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -61,6 +63,11 @@ public class WorkoutController {
   @RequestMapping(method = GET, value = "/week")
   public ResponseEntity getThisWeeksWorkouts() {
     return new ResponseEntity(workoutService.findRemainingWorkoutsForWeek(), HttpStatus.OK);
+  }
+
+  @RequestMapping(method = GET, value = "/by-date/{workoutDate}")
+  public ResponseEntity getThisWeeksWorkouts(@PathVariable @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDate workoutDate) {
+    return returnWorkoutIfFound(workoutService.findWorkoutForDate(workoutDate));
   }
 
   @RequestMapping(method = POST)

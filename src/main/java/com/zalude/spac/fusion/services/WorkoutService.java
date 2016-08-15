@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,13 +43,23 @@ public class WorkoutService {
     return Optional.ofNullable(this.workoutRepository.findTodaysWorkout());
   }
 
+  public Optional<Workout> findWorkoutForDate(LocalDate date) {
+    return Optional.ofNullable(this.workoutRepository.findOneByWorkoutDate(date));
+  }
+
   public Iterable<Workout> findRemainingWorkoutsForWeek() {
     LocalDate todaysDay = LocalDate.now();
     LocalDate endOfWeek = LocalDate.now().with(DayOfWeek.SUNDAY);
     return workoutRepository.findAllWorkouts(todaysDay, endOfWeek);
   }
 
-  public Workout create(Workout workout) {
+  public Workout create(Workout workout) throws ResourceValidationException {
+    if (findWorkoutForDate(workout.getWorkoutDate()).isPresent()) {
+      throw new ResourceValidationException(null,
+          Collections.singletonMap("workoutDate", Collections.singletonList("Workout already exists for date: " + workout.getWorkoutDate().toString())),
+          null);
+    }
+
     return this.workoutRepository.save(workout);
   }
 

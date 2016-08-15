@@ -24,4 +24,6 @@ public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
   @Query("SELECT w FROM Workout w WHERE w.workoutDate BETWEEN :dateStartRange AND :dateEndRange")
   Iterable<Workout> findAllWorkouts(@Param("dateStartRange") LocalDate dateStartRange,
                                     @Param("dateEndRange") LocalDate dateEndRange);
+
+  Workout findOneByWorkoutDate(LocalDate workoutDate);
 }
