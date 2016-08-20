@@ -1,6 +1,7 @@
 package com.zalude.spac.fusion.repositories;
 
 import com.zalude.spac.fusion.models.domain.UserExerciseOptionLookup;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,7 +29,7 @@ public interface UserExerciseOptionLookupRepository extends JpaRepository<UserEx
   void updateLookup(@Param("userExerciseOptionLookupId") UUID userExerciseOptionLookupId,
                     @Param("amountCompleted") String amountCompleted);
 
-  Iterable<UserExerciseOptionLookup> findAllByUserId(UUID userId);
+  List<UserExerciseOptionLookup> findAllByUserId(UUID userId, Pageable pageable);
 
   Iterable<UserExerciseOptionLookup> findAllByUserIdAndWorkoutId(UUID userId, UUID workoutId);
 

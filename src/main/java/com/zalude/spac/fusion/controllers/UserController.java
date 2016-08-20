@@ -95,7 +95,7 @@ public class UserController {
     }
   }
 
-  private ResponseEntity<FusionUser> createOrUpdateUser(UserRequest userRequest, Optional<UUID> userId) {
+  private ResponseEntity createOrUpdateUser(UserRequest userRequest, Optional<UUID> userId) {
     val user = toDomain(userRequest, userId);
     try {
       FusionUser savedUser;
@@ -117,8 +117,10 @@ public class UserController {
 
   // GET COMPLETED WORKOUTS FOR USER
   @RequestMapping(method = RequestMethod.GET, value = "/{userId}/workouts")
-  public ResponseEntity<Iterable<UserCompletedWorkoutResponse>> getCompletedWorkouts(@PathVariable UUID userId) {
-    val exerciseOptionLookups = userService.getCompletedWorkoutsForUser(userId);
+  public ResponseEntity getCompletedWorkouts(@PathVariable UUID userId,
+                                             @RequestParam("page") Integer page,
+                                             @RequestParam("pageSize") Integer pageSize) {
+    val exerciseOptionLookups = userService.getCompletedWorkoutsForUser(userId, page, pageSize);
     if (exerciseOptionLookups.isPresent()) {
       return new ResponseEntity(asResponse(exerciseOptionLookups.get()), HttpStatus.OK);
     } else {
@@ -128,8 +130,8 @@ public class UserController {
 
   // GET COMPLETED WORKOUTS FOR USER
   @RequestMapping(method = RequestMethod.GET, value = "/{userId}/workouts/{workoutId}")
-  public ResponseEntity<UserCompletedWorkoutResponse> getCompletedWorkout(@PathVariable UUID userId,
-                                                                          @PathVariable UUID workoutId) {
+  public ResponseEntity getCompletedWorkout(@PathVariable UUID userId,
+                                            @PathVariable UUID workoutId) {
     val exerciseOptionLookups = userService.getCompletedWorkoutForUser(userId, workoutId);
     final Optional<UserCompletedWorkoutResponse> userCompletedWorkoutResponse = exerciseOptionLookups.flatMap(userExerciseOptionLookups -> {
       return asResponse(userExerciseOptionLookups).stream().findFirst();
@@ -144,9 +146,9 @@ public class UserController {
 
   // CREATE COMPLETED USER WORKOUT
   @RequestMapping(method = RequestMethod.POST, value = "/{userId}/workouts/{workoutId}")
-  public ResponseEntity<UserCompletedWorkoutResponse> createCompletedWorkout(@PathVariable UUID userId,
-                                                                             @PathVariable UUID workoutId,
-                                                                             @RequestBody @Valid UserCompletedWorkoutRequest completedWorkoutRequest) {
+  public ResponseEntity createCompletedWorkout(@PathVariable UUID userId,
+                                               @PathVariable UUID workoutId,
+                                               @RequestBody @Valid UserCompletedWorkoutRequest completedWorkoutRequest) {
     try {
       val userExerciseOptionLookup = toDomain(completedWorkoutRequest, workoutId, userId);
       val savedLookups = userService.saveUserExerciseOptionLookup(userExerciseOptionLookup);

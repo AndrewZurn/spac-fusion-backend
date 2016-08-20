@@ -9,6 +9,7 @@ import com.zalude.spac.fusion.repositories.UserRepository;
 import lombok.NonNull;
 import lombok.val;
 import org.javatuples.Triplet;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -59,12 +60,12 @@ public class UserService {
     return userRepository.save(existingUser);
   }
 
-  public Optional<Iterable<UserExerciseOptionLookup>> getCompletedWorkoutsForUser(UUID userId) {
+  public Optional<Iterable<UserExerciseOptionLookup>> getCompletedWorkoutsForUser(UUID userId, Integer page, Integer pageSize) {
     val user = find(userId);
     if (!user.isPresent()) {
       return Optional.empty();
     } else {
-      return Optional.ofNullable(userExerciseOptionLookupRepository.findAllByUserId(userId));
+      return Optional.ofNullable(userExerciseOptionLookupRepository.findAllByUserId(userId, new PageRequest(page, pageSize)));
     }
   }
 
