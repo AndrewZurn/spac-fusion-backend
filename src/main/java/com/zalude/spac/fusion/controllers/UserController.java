@@ -111,7 +111,7 @@ public class UserController {
     } catch (ResourceValidationException e) {
       return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
     } catch (ResourceNotFoundException e) {
-      return new ResponseEntity(e, HttpStatus.NOT_FOUND);
+      return new ResponseEntity(e.getId(), HttpStatus.NOT_FOUND);
     }
   }
 

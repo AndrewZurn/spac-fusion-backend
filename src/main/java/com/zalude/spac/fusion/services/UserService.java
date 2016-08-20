@@ -54,7 +54,7 @@ public class UserService {
   }
 
   public FusionUser update(FusionUser user) throws ResourceValidationException, ResourceNotFoundException {
-    val existingUser = userRepository.findOne(user.getId());
+    val existingUser = find(user.getId()).orElseThrow(() -> new ResourceNotFoundException(user.getId(), "User not found."));
     updateUserInstanceField(user, existingUser);
     return userRepository.save(existingUser);
   }
