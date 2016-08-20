@@ -32,9 +32,11 @@ public class FusionUser {
   private UUID id;
 
   @NonNull
+  @Column(name = "auth0_id")
+  private String auth0Id;
+
   private String firstName;
 
-  @NonNull
   private String lastName;
 
   @NonNull
@@ -43,20 +45,14 @@ public class FusionUser {
   @NonNull
   private String email;
 
-  @NotNull
   private Integer age;
 
-  @NotNull
   private Double height;
 
-  @NotNull
   private Double weight;
 
   @NotNull
   private Integer programLevel;
-
-  @NotNull
-  private Boolean activeStatus;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
   @JsonIgnore
@@ -109,8 +105,10 @@ public class FusionUser {
   public FusionUser() {
   }
 
-  public FusionUser(UUID id, String firstName, String lastName, String username, String email, Integer age, Double height, Double weight, Integer programLevel, Boolean activeStatus) {
+  public FusionUser(UUID id, String auth0Id, String firstName, String lastName, String username, String email,
+                    Integer age, Double height, Double weight, Integer programLevel) {
     this.id = id;
+    this.auth0Id = auth0Id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.username = username;
@@ -119,6 +117,6 @@ public class FusionUser {
     this.height = height;
     this.weight = weight;
     this.programLevel = programLevel;
-    this.activeStatus = activeStatus;
   }
+
 }

@@ -11,6 +11,9 @@ databaseChangeLog:
                 name: id
                 value: ba729f5c-9781-4d88-bca7-f5098930eff7
             - column:
+                name: auth0_id
+                value: 123454321
+            - column:
                 name: first_name
                 value: Billy
             - column:
@@ -34,6 +37,3 @@ databaseChangeLog:
             - column:
                 name: program_level
                 value: 1
-            - column:
-                name: active_status
-                value: true

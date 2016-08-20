@@ -11,6 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public abstract class UserRequest {
 
+  private String auth0Id;
+
   private String firstName;
 
   private String lastName;
@@ -25,6 +27,6 @@ public abstract class UserRequest {
 
   private Double weight;
 
-  private Integer programLevel;
+  private String programLevel;
 
 }

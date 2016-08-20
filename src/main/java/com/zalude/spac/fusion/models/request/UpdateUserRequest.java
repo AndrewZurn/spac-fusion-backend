@@ -16,7 +16,8 @@ import org.hibernate.validator.constraints.NotBlank;
 @NoArgsConstructor
 public class UpdateUserRequest extends UserRequest {
 
-  public UpdateUserRequest(String firstName, String lastName, String username, String email, Integer age, Double height, Double weight, Integer programLevel) {
-    super(firstName, lastName, username, email, age, height, weight, programLevel);
+  public UpdateUserRequest(String auth0Id, String firstName, String lastName, String username,
+                           String email, Integer age, Double height, Double weight, String programLevel) {
+    super(auth0Id, firstName, lastName, username, email, age, height, weight, programLevel);
   }
 }

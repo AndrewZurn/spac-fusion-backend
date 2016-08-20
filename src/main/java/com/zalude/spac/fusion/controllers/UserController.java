@@ -107,21 +107,6 @@ public class UserController {
     }
   }
 
-  // UPDATE USER STATUS
-  @RequestMapping(method = RequestMethod.PUT, value = "/{userId}/status")
-  public ResponseEntity updateUserStatus(@PathVariable UUID userId,
-                                         @RequestBody @Valid UpdateUserStatusRequest statusRequest) {
-    try {
-      if (userService.updateStatus(userId, statusRequest.getActive())) {
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
-      } else {
-        return new ResponseEntity(HttpStatus.NOT_FOUND);
-      }
-    } catch (ResourceNotFoundException e) {
-      return new ResponseEntity(e, HttpStatus.NOT_FOUND);
-    }
-  }
-
   // GET COMPLETED WORKOUTS FOR USER
   @RequestMapping(method = RequestMethod.GET, value = "/{userId}/workouts")
   public ResponseEntity<Iterable<UserCompletedWorkoutResponse>> getCompletedWorkouts(@PathVariable UUID userId) {
@@ -188,9 +173,10 @@ public class UserController {
   }
 
   private FusionUser toDomain(UserRequest userRequest, Optional<UUID> userId) {
-    return new FusionUser(userId.orElseGet(UUID::randomUUID), userRequest.getFirstName(), userRequest.getLastName(),
+    val programLevel = FusionUser.ProgramLevel.valueOf(userRequest.getProgramLevel()).getLevel();
+    return new FusionUser(userId.orElseGet(UUID::randomUUID), userRequest.getAuth0Id(), userRequest.getFirstName(), userRequest.getLastName(),
         userRequest.getUsername(), userRequest.getEmail(), userRequest.getAge(), userRequest.getHeight(), userRequest.getWeight(),
-        userRequest.getProgramLevel(), true);
+        programLevel);
   }
 
   private List<UserCompletedWorkoutResponse> asResponse(Iterable<UserExerciseOptionLookup> userExerciseOptionLookups) {

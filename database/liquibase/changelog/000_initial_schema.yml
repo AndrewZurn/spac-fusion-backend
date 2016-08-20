@@ -74,15 +74,14 @@ databaseChangeLog:
                       primaryKey: true
                       nullable: false
                 - column:
+                    name: "auth0_id"
+                    type: "text"
+                - column:
                     name: "first_name"
                     type: "text"
-                    constraints:
-                      nullable: false
                 - column:
                     name: "last_name"
                     type: "text"
-                    constraints:
-                      nullable: false
                 - column:
                     name: "username"
                     type: "text"
@@ -96,26 +95,15 @@ databaseChangeLog:
                 - column:
                     name: "age"
                     type: "integer"
-                    constraints:
-                      nullable: false
                 - column:
                     name: "height"
                     type: "double precision"
-                    constraints:
-                      nullable: false
                 - column:
                     name: "weight"
                     type: "double precision"
-                    constraints:
-                      nullable: false
                 - column:
                     name: "program_level"
                     type: "integer"
-                    constraints:
-                      nullable: false
-                - column:
-                    name: "active_status"
-                    type: "boolean"
                     constraints:
                       nullable: false
           - createTable:

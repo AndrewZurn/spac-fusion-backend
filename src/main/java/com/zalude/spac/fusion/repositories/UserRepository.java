@@ -19,8 +19,4 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<FusionUser, UUID> {
 
-  @Modifying
-  @Transactional
-  @Query("UPDATE FusionUser u SET u.activeStatus = :newStatus WHERE u.id = :userId")
-  void updateUserStatus(@Param("userId") UUID userId, @Param("newStatus") boolean newStatus);
 }

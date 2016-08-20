@@ -39,6 +39,9 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
             option.exerciseOption = result.exerciseOptions.find { resultOption -> resultOption.name == option.exerciseOption.name }
         }
 
+        // remove seeded users
+        userRepository.deleteAllInBatch()
+
         workoutRepository.save(testWorkout)
         userRepository.save(testFusionUser)
         userRepository.save(otherTestFusionUser)
@@ -54,11 +57,10 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         given:
         when:
         def result = restTemplate.getForEntity(serviceURI(), List.class)
-        List<FusionUser> userList = result.body
 
         then:
         result.statusCode == HttpStatus.OK
-        userList.size() == 2
+        result.body.size() == 2
     }
 
     def "find a user"() {
@@ -74,7 +76,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
 
     def "create a user"() {
         given:
-        CreateUserRequest createUserRequest = new CreateUserRequest("William", "Overturn", "w.o", "w.o@email.com", 35, 5.10, 158, 1)
+        CreateUserRequest createUserRequest = new CreateUserRequest("123sdfa", "w.o", "w.o@email.com", "BRONZE")
 
         when:
         def result = restTemplate.postForEntity(serviceURI(), createUserRequest, FusionUser.class)
@@ -90,13 +92,12 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         createdUser.age == createUserRequest.age
         createdUser.weight == createUserRequest.weight
         createdUser.height == createUserRequest.height
-        createdUser.programLevel == createUserRequest.programLevel
-        createdUser.activeStatus
+        createdUser.programLevel == FusionUser.ProgramLevel.BRONZE.level
     }
 
     def "update a user with only provided values"() {
         given:
-        UpdateUserRequest updateUserRequest = new UpdateUserRequest("Andy", "McBeth", null, "andy.mcbeth@email.com", 26, null, 200, 2)
+        UpdateUserRequest updateUserRequest = new UpdateUserRequest("as234124", "Andy", "McBeth", null, "andy.mcbeth@email.com", 26, null, 200, "SILVER")
 
         when:
         def result = restTemplate.exchange(serviceURI("/${testFusionUser.id}"), HttpMethod.PUT, new HttpEntity(updateUserRequest), FusionUser.class)
@@ -112,28 +113,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         updatedUser.age == updateUserRequest.age
         updatedUser.height == testFusionUser.height
         updatedUser.weight == updateUserRequest.weight
-        updatedUser.programLevel == updateUserRequest.programLevel
-    }
-
-    def "update a user's status"() {
-        given:
-        when:
-        def setInactiveResult = restTemplate.exchange(serviceURI("/${testFusionUser.id}/status"),
-                HttpMethod.PUT, new HttpEntity(new UpdateUserStatusRequest(false)), Void.class)
-        def setInactiveFindResult = restTemplate.getForEntity(serviceURI("/${testFusionUser.id}"), FusionUser.class)
-        def setActiveResult = restTemplate.exchange(serviceURI("/${testFusionUser.id}/status"),
-                HttpMethod.PUT, new HttpEntity(new UpdateUserStatusRequest(true)), Void.class)
-        def setActiveFindResult = restTemplate.getForEntity(serviceURI("/${testFusionUser.id}"), FusionUser.class)
-
-        then:
-        setInactiveResult.statusCode == HttpStatus.NO_CONTENT
-        setActiveResult.statusCode == HttpStatus.NO_CONTENT
-        setInactiveFindResult.statusCode == HttpStatus.OK
-        setActiveFindResult.statusCode == HttpStatus.OK
-
-        // check users
-        !setInactiveFindResult.body.activeStatus
-        setActiveFindResult.body.activeStatus
+        updatedUser.programLevel == FusionUser.ProgramLevel.SILVER.level
     }
 
     def "find a list of the user's completed workout/exercise option lookups"() {

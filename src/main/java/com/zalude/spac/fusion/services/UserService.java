@@ -55,15 +55,6 @@ public class UserService {
     return userRepository.save(existingUser);
   }
 
-  public boolean updateStatus(UUID userId, boolean newStatus) throws ResourceNotFoundException {
-    if (!userRepository.exists(userId)) {
-      throw new ResourceNotFoundException(userId, null);
-    } else {
-      userRepository.updateUserStatus(userId, newStatus);
-      return userRepository.findOne(userId).getActiveStatus() == newStatus;
-    }
-  }
-
   public Optional<Iterable<UserExerciseOptionLookup>> getCompletedWorkoutsForUser(UUID userId) {
     val user = find(userId);
     if (!user.isPresent()) {
@@ -135,10 +126,6 @@ public class UserService {
 
     if (user.getProgramLevel() != null) {
       existingUser.setProgramLevel(user.getProgramLevel());
-    }
-
-    if (user.getActiveStatus() != null) {
-      existingUser.setActiveStatus(user.getActiveStatus());
     }
   }
 }

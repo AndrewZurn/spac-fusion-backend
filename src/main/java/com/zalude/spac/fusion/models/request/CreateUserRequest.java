@@ -1,15 +1,10 @@
 package com.zalude.spac.fusion.models.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
-
 /**
- * TODO: DESCRIPTION OF CLASS HERE
- *
- * @author Andrew Zurn (azurn)
+ * Request to be sent from an Auth0 webhook upon user creation in their system.
  */
 @Getter
 @Setter
@@ -17,11 +12,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class CreateUserRequest extends UserRequest {
 
-  @NotBlank(message = "Please provide a First Name for the user.")
-  private String firstName;
-
-  @NotBlank(message = "Please provide a Last Name for the user.")
-  private String lastName;
+  @NotBlank(message = "An Auth0 User ID must be provided.")
+  private String auth0Id;
 
   @NotBlank(message = "Please provide a User Name for the user.")
   private String username;
@@ -29,16 +21,7 @@ public class CreateUserRequest extends UserRequest {
   @NotBlank(message = "Please provide a Email Address for the user.")
   private String email;
 
-  @NotNull
-  private Integer age;
-
-  @NotNull
-  private Double height;
-
-  @NotNull
-  private Double weight;
-
-  @NotNull
-  private Integer programLevel;
+  @NotBlank(message = "A Program Level must be provided.")
+  private String programLevel;
 
 }
