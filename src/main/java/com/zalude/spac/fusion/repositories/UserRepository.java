@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -19,4 +20,5 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<FusionUser, UUID> {
 
+  FusionUser findByAuth0Id(String auth0Id);
 }

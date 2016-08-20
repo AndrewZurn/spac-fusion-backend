@@ -45,6 +45,10 @@ public class UserService {
     return Optional.ofNullable(userRepository.findOne(userId));
   }
 
+  public Optional<FusionUser> findByAuth0Id(String auth0Id) {
+    return Optional.ofNullable(userRepository.findByAuth0Id(auth0Id));
+  }
+
   public FusionUser create(FusionUser user) throws ResourceValidationException {
     return userRepository.save(user);
   }

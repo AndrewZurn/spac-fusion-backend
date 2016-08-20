@@ -59,12 +59,12 @@ public class UserController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/{userId}")
   public ResponseEntity<FusionUser> getUser(@PathVariable UUID userId) {
-    val user = userService.find(userId);
-    if (user.isPresent()) {
-      return new ResponseEntity(user.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity(HttpStatus.NOT_FOUND);
-    }
+    return returnUserIfFound(userService.find(userId));
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/auth0/{auth0Id}")
+  public ResponseEntity<FusionUser> getUser(@PathVariable String auth0Id) {
+    return returnUserIfFound(userService.findByAuth0Id(auth0Id));
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/{userId}/can-unlock-workout")
@@ -85,6 +85,14 @@ public class UserController {
   public ResponseEntity<FusionUser> updateUser(@PathVariable UUID userId,
                                                @RequestBody @Valid UpdateUserRequest userRequest) {
     return createOrUpdateUser(userRequest, Optional.of(userId));
+  }
+
+  private ResponseEntity returnUserIfFound(Optional<FusionUser> user) {
+    if (user.isPresent()) {
+      return new ResponseEntity(user.get(), HttpStatus.OK);
+    } else {
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
   }
 
   private ResponseEntity<FusionUser> createOrUpdateUser(UserRequest userRequest, Optional<UUID> userId) {

@@ -74,6 +74,17 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         user == testFusionUser
     }
 
+    def "find a user by their auth0Id"() {
+        given:
+        when:
+        def result = restTemplate.getForEntity(serviceURI("/auth0/${testFusionUser.auth0Id}"), FusionUser.class)
+        def user = result.body
+
+        then:
+        result.statusCode == HttpStatus.OK
+        user == testFusionUser
+    }
+
     def "create a user"() {
         given:
         CreateUserRequest createUserRequest = new CreateUserRequest("123sdfa", "w.o", "w.o@email.com", "BRONZE")
