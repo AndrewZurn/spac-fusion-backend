@@ -15,6 +15,12 @@ public class CreateUserRequest extends UserRequest {
   @NotBlank(message = "An Auth0 User ID must be provided.")
   private String auth0Id;
 
+  @NotBlank(message = "Please provide a First Name for the user.")
+  private String firstName;
+
+  @NotBlank(message = "Please provide a Last Name for the user.")
+  private String lastName;
+
   @NotBlank(message = "Please provide a User Name for the user.")
   private String username;
 

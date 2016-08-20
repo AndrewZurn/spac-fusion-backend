@@ -87,7 +87,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
 
     def "create a user"() {
         given:
-        CreateUserRequest createUserRequest = new CreateUserRequest("123sdfa", "w.o", "w.o@email.com", "BRONZE")
+        CreateUserRequest createUserRequest = new CreateUserRequest("123sdfa", "Andrew", "Zurn", "w.o", "w.o@email.com", "BRONZE")
 
         when:
         def result = restTemplate.postForEntity(serviceURI(), createUserRequest, FusionUser.class)
