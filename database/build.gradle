@@ -50,17 +50,11 @@ liquibase {
             username 'admin'
             password 'admin'
         }
-        dev {
+        aws {
             changeLogFile changeLogFileLocation
-            url 'jdbc:postgresql://someUrl:5432/spac_fusion'
-            username 'admin'
-            password 'somepass'
-        }
-        prod {
-            changeLogFile changeLogFileLocation
-            url 'jdbc:postgresql://someUrl:5432/spac_fusion'
-            username 'admin'
-            password 'somepass'
+            url "jdbc:postgresql://${System.env.SPAC_FUSION_DEV_DB_URL}"
+            username System.env.SPAC_FUSION_DEV_DB_USR
+            password System.env.SPAC_FUSION_DEV_DB_PWD
         }
     }
 
