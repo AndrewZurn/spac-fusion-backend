@@ -25,7 +25,6 @@ import javax.validation.Valid;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * TODO: DESCRIPTION OF CLASS HERE
@@ -168,7 +167,6 @@ public class UserController {
     }
   }
 
-
   // UPDATE COMPLETED USER WORKOUT
   @RequestMapping(method = RequestMethod.POST, value = "/{userId}/workouts/lookup/{userExerciseOptionLookupId}")
   public ResponseEntity updateCompletedWorkout(@PathVariable UUID userId,
@@ -208,7 +206,7 @@ public class UserController {
           .collect(Collectors.toList());
 
       return new UserCompletedWorkoutResponse(workout.getId(), workout.getDuration(), workout.getWorkoutDate(), workout.getExercise().getId(),
-          workout.getExercise().getName(), workout.getExercise().getDescription(), responseList);
+          workout.getExercise().getName(), workout.getExercise().getInstructions(), responseList);
     };
   }
 

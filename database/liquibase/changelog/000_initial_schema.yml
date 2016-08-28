@@ -26,7 +26,7 @@ databaseChangeLog:
                     constraints:
                       nullable: false
                 - column:
-                    name: "description"
+                    name: "instructions"
                     type: "text"
           - createTable:
               tableName: "exercise_option"
@@ -153,6 +153,9 @@ databaseChangeLog:
                     type: "text"
                     constraints:
                       nullable: false
+                - column:
+                    name: "preview_text"
+                    type: "text"
                 - column:
                     name: "workout_date"
                     type: "date"

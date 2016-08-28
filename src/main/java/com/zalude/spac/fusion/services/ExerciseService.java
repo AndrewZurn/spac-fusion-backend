@@ -64,7 +64,7 @@ public class ExerciseService {
     existingExercise.getExerciseOptions().clear();
     existingExercise.getExerciseOptions().addAll(exercise.getExerciseOptions());
     existingExercise.setName(exercise.getName());
-    existingExercise.setDescription(exercise.getDescription());
+    existingExercise.setInstructions(exercise.getInstructions());
 
     return this.exerciseRepository.save(existingExercise);
   }

@@ -70,6 +70,7 @@ public class WorkoutService {
       foundWorkout.setDuration(workout.getDuration());
       foundWorkout.setWorkoutDate(workout.getWorkoutDate());
       foundWorkout.setExercise(workout.getExercise());
+      foundWorkout.setPreviewText(workout.getPreviewText());
       return this.workoutRepository.save(foundWorkout);
     } else {
       val errors = Collections.singletonMap(id, Collections.singletonList("Could not find Workout."));

@@ -113,8 +113,10 @@ public class WorkoutController {
     val exerciseId = workoutRequest.getExerciseId();
     val exercise = exerciseService.findExercise(exerciseId);
     if (exercise.isPresent()) {
-      return new Workout(workoutId.orElseGet(UUID::randomUUID), workoutRequest.getDuration(),
+      val workout = new Workout(workoutId.orElseGet(UUID::randomUUID), workoutRequest.getDuration(),
           workoutRequest.getWorkoutDate(), exercise.get());
+      workout.setPreviewText(workoutRequest.getPreviewText());
+      return workout;
     } else {
       val errors = Collections.singletonMap(exerciseId, Collections.singletonList("Could not find Exercise."));
       throw new ResourceValidationException(errors, null, null);

@@ -22,7 +22,7 @@ public class CreateOrUpdateExerciseRequest {
     private String name;
 
     @NotNull
-    private String description;
+    private String instructions;
 
     private List<CreateOrUpdateExerciseOptionRequest> exerciseOptions;
 }

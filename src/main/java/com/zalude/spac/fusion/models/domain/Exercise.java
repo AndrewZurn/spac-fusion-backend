@@ -37,7 +37,7 @@ public class Exercise {
   private String name;
 
   @NonNull
-  private String description;
+  private String instructions;
 
   @OneToMany(mappedBy = "exercise",
       cascade = CascadeType.ALL,

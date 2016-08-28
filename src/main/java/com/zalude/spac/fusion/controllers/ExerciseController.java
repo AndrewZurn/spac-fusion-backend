@@ -88,7 +88,7 @@ public class ExerciseController {
   }
 
   private Exercise toDomain(CreateOrUpdateExerciseRequest exerciseRequest, UUID exerciseId) {
-    val exercise = new Exercise(exerciseRequest.getName(), exerciseRequest.getDescription(), Collections.emptyList());
+    val exercise = new Exercise(exerciseRequest.getName(), exerciseRequest.getInstructions(), Collections.emptyList());
     exercise.setId(exerciseId);
 
     val exerciseOptions = exerciseRequest.getExerciseOptions().stream()

@@ -22,6 +22,8 @@ public class CreateOrUpdateWorkoutRequest {
   @NonNull
   private String duration;
 
+  private String previewText;
+
   @NonNull
   private LocalDate workoutDate;
 }

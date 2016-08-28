@@ -37,7 +37,7 @@ class ExerciseOptionRepositoryIntegrationTest extends RepositoryTestBase impleme
     def "save a new exercise option to an exercise"() {
         given:
         def newOption = new ExerciseOption(UUID.fromString("2e6d247c-c50e-403d-8a0a-6059000a267c"), "New Name", "Reps", "50")
-        newOption.description = "Some new description"
+        newOption.description = "Some new instructions"
         newOption.exercise = testExercise
         testExercise.exerciseOptions += testExercise
 

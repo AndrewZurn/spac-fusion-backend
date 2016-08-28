@@ -75,7 +75,7 @@ class ExerciseControllerIntegrationTest extends ControllerTestBase implements In
 
         then:
         createExerciseResult.body.name == createExerciseRequestBody.name
-        createExerciseResult.body.description == createExerciseRequestBody.description
+        createExerciseResult.body.instructions == createExerciseRequestBody.instructions
         createExerciseResult.body.exerciseOptions.size() == createExerciseOptions.size()
         createExerciseResult.body.exerciseOptions.forEach { option ->
             option.name in createExerciseOptionRequestNames

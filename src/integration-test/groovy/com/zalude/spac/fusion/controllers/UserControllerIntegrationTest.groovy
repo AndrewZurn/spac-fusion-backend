@@ -6,7 +6,6 @@ import com.zalude.spac.fusion.models.domain.FusionUser
 import com.zalude.spac.fusion.models.request.CreateUserRequest
 import com.zalude.spac.fusion.models.request.UpdateCompletedWorkoutRequest
 import com.zalude.spac.fusion.models.request.UpdateUserRequest
-import com.zalude.spac.fusion.models.request.UpdateUserStatusRequest
 import com.zalude.spac.fusion.models.request.UserCompletedWorkoutRequest
 import com.zalude.spac.fusion.models.response.UserCompletedWorkoutResponse
 import com.zalude.spac.fusion.repositories.ExerciseRepository
@@ -130,7 +129,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
     def "find a list of the user's completed workout/exercise option lookups"() {
         given:
         when:
-        def result = restTemplate.getForEntity(serviceURI("/${testFusionUser.id}/workouts"), List.class)
+        def result = restTemplate.getForEntity(serviceURI("/${testFusionUser.id}/workouts?page=0&pageSize=10"), List.class)
         List<UserCompletedWorkoutResponse> completedWorkouts = result.body
 
         then:
@@ -148,7 +147,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
             new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(option.id, option.name, option.description, option.type, option.targetAmount, "25")
         }
         def expectedResponse = new UserCompletedWorkoutResponse(testWorkout.id, testWorkout.duration, testWorkout.workoutDate,
-                testWorkout.exercise.id, testWorkout.exercise.name, testWorkout.exercise.description, lookupResponseList)
+                testWorkout.exercise.id, testWorkout.exercise.name, testWorkout.exercise.instructions, lookupResponseList)
 
         when:
         def result = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/workouts/${testWorkout.id}"), createCompletedWorkoutRequest, UserCompletedWorkoutResponse.class)

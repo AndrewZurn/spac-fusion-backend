@@ -35,6 +35,8 @@ public class Workout implements Cloneable {
   @NonNull
   private String duration;
 
+  private String previewText;
+
   @NonNull
   @JsonDeserialize(using = LocalDateDeserializer.class)
   @JsonSerialize(using = LocalDateSerializer.class)
