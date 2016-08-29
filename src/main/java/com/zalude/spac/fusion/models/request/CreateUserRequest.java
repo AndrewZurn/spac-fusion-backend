@@ -27,7 +27,7 @@ public class CreateUserRequest extends UserRequest {
   @NotBlank(message = "Please provide a Email Address for the user.")
   private String email;
 
-  @NotBlank(message = "A Program Level must be provided.")
+  @NotBlank(message = "A Program Level of 'GOLD', 'SILVER', or 'BRONZE' must be provided.")
   private String programLevel;
 
 }

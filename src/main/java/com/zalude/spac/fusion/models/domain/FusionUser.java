@@ -9,7 +9,6 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -52,7 +51,7 @@ public class FusionUser {
   private Double weight;
 
   @NotNull
-  private Integer programLevel;
+  private String programLevel;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
   @JsonIgnore
@@ -60,44 +59,16 @@ public class FusionUser {
 
   @Getter
   public enum ProgramLevel {
-    GOLD(2, "Gold", 7),
-    SILVER(1, "Silver", 3),
-    BRONZE(0, "Bronze", 2);
+    GOLD("Gold", 7),
+    SILVER("Silver", 3),
+    BRONZE("Bronze", 2);
 
-    private int level;
     private String name;
     private int workoutLimit;
 
-    private ProgramLevel(int level, String name, int workoutLimit) {
-      this.level = level;
+    private ProgramLevel(String name, int workoutLimit) {
       this.name = name;
       this.workoutLimit = workoutLimit;
-    }
-
-    public static ProgramLevel fromValue(int level) {
-      switch (level) {
-        case 0:
-          return ProgramLevel.BRONZE;
-        case 1:
-          return ProgramLevel.SILVER;
-        case 2:
-          return ProgramLevel.GOLD;
-        default:
-          throw new UnsupportedOperationException("Unsupported Program Level. Value: " + level);
-      }
-    }
-
-    public ProgramLevel fromValue(String level) {
-      switch (level.toUpperCase()) {
-        case "BRONZE":
-          return ProgramLevel.BRONZE;
-        case "SILVER":
-          return ProgramLevel.SILVER;
-        case "GOLD":
-          return ProgramLevel.GOLD;
-        default:
-          throw new UnsupportedOperationException("Unsupported Program Level. Value: " + level);
-      }
     }
   }
 
@@ -106,7 +77,7 @@ public class FusionUser {
   }
 
   public FusionUser(UUID id, String auth0Id, String firstName, String lastName, String username, String email,
-                    Integer age, Double height, Double weight, Integer programLevel) {
+                    Integer age, Double height, Double weight, String programLevel) {
     this.id = id;
     this.auth0Id = auth0Id;
     this.firstName = firstName;

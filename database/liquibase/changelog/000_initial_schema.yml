@@ -103,7 +103,7 @@ databaseChangeLog:
                     type: "double precision"
                 - column:
                     name: "program_level"
-                    type: "integer"
+                    type: "text"
                     constraints:
                       nullable: false
           - createTable:

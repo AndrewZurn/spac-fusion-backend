@@ -27,6 +27,10 @@ public class ResourceValidationException extends Exception {
     super(message);
   }
 
+  public ResourceValidationException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
   public ResourceValidationException(Map<UUID, List<String>> errorsById, Map<String, List<String>> errorsByName, String message) {
     super(message);
     this.errorsById = errorsById;

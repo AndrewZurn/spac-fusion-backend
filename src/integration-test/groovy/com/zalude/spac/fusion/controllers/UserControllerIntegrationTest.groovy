@@ -102,7 +102,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         createdUser.age == createUserRequest.age
         createdUser.weight == createUserRequest.weight
         createdUser.height == createUserRequest.height
-        createdUser.programLevel == FusionUser.ProgramLevel.BRONZE.level
+        createdUser.programLevel == FusionUser.ProgramLevel.BRONZE.name
     }
 
     def "update a user with only provided values"() {
@@ -123,7 +123,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         updatedUser.age == updateUserRequest.age
         updatedUser.height == testFusionUser.height
         updatedUser.weight == updateUserRequest.weight
-        updatedUser.programLevel == FusionUser.ProgramLevel.SILVER.level
+        updatedUser.programLevel == FusionUser.ProgramLevel.SILVER.name
     }
 
     def "find a list of the user's completed workout/exercise option lookups"() {

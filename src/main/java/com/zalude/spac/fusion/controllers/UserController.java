@@ -95,8 +95,8 @@ public class UserController {
   }
 
   private ResponseEntity createOrUpdateUser(UserRequest userRequest, Optional<UUID> userId) {
-    val user = toDomain(userRequest, userId);
     try {
+      val user = toDomain(userRequest, userId);
       FusionUser savedUser;
       HttpStatus successStatus;
       if (userId.isPresent()) {
@@ -160,7 +160,7 @@ public class UserController {
       } else {
         return new ResponseEntity(new ResourceNotFoundResponse(workoutId), HttpStatus.NOT_FOUND);
       }
-    } catch (ResourceValidationException e) {
+    } catch (ResourceValidationException | IllegalArgumentException e) {
       return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
     } catch (ResourceNotFoundException e) {
       return new ResponseEntity(new ResourceNotFoundResponse(e.getId()), HttpStatus.NOT_FOUND);
@@ -180,8 +180,8 @@ public class UserController {
     }
   }
 
-  private FusionUser toDomain(UserRequest userRequest, Optional<UUID> userId) {
-    val programLevel = FusionUser.ProgramLevel.valueOf(userRequest.getProgramLevel()).getLevel();
+  private FusionUser toDomain(UserRequest userRequest, Optional<UUID> userId) throws ResourceValidationException {
+    String programLevel = FusionUser.ProgramLevel.valueOf(userRequest.getProgramLevel()).getName();
     return new FusionUser(userId.orElseGet(UUID::randomUUID), userRequest.getAuth0Id(), userRequest.getFirstName(), userRequest.getLastName(),
         userRequest.getUsername(), userRequest.getEmail(), userRequest.getAge(), userRequest.getHeight(), userRequest.getWeight(),
         programLevel);

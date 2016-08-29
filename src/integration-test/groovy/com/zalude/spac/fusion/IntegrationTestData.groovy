@@ -39,9 +39,9 @@ trait IntegrationTestData {
         this.testWorkout.previewText = "This one makes fat cry."
 
         this.testFusionUser = new FusionUser(UUID.fromString("e7e0416d-6f2b-4c85-8002-b6b8d55c127d"), "2341242ab32",
-                "Andrew", "Zurn", "andrew.zurn", "andrew.zurn@email.com", 24, 6.5, 215.5, 1)
+                "Andrew", "Zurn", "andrew.zurn", "andrew.zurn@email.com", 24, 6.5, 215.5, "SILVER")
         this.otherTestFusionUser = new FusionUser(UUID.fromString("d7c68598-c897-438c-a577-bef3d89d60f1"), "234af32sdf23",
-                "Shannon", "Lane", "shannon.lane", "shannon.lane@email.com", 25, 5.6, 130.0, 2)
+                "Shannon", "Lane", "shannon.lane", "shannon.lane@email.com", 25, 5.6, 130.0, "GOLD")
 
         this.testUserExerciseOptionLookup = new UserExerciseOptionLookup(UUID.fromString("7229af23-fc3c-492f-9d67-f5197633f15c"),
                 testFusionUser, testExerciseOptionsList.get(0), testWorkout, "25")

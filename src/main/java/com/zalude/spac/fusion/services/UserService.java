@@ -8,7 +8,6 @@ import com.zalude.spac.fusion.repositories.UserExerciseOptionLookupRepository;
 import com.zalude.spac.fusion.repositories.UserRepository;
 import lombok.NonNull;
 import lombok.val;
-import org.javatuples.Triplet;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -95,10 +94,8 @@ public class UserService {
 
       // get the user's completed workouts for the week and their program level
       Integer userCompleteWorkouts = userExerciseOptionLookupRepository.completedWorkoutsForWeek(userId, startOfWeek, endOfWeek);
-      FusionUser.ProgramLevel userProgramLevel = FusionUser.ProgramLevel.fromValue(fusionUser.getProgramLevel());
+      FusionUser.ProgramLevel userProgramLevel = FusionUser.ProgramLevel.valueOf(fusionUser.getProgramLevel().toUpperCase());
 
-      System.out.println("User program level limit: " + userProgramLevel.getWorkoutLimit());
-      System.out.println("User number of completed workouts: " + userCompleteWorkouts);
       return userProgramLevel.getWorkoutLimit() - userCompleteWorkouts;
     });
   }

@@ -36,4 +36,4 @@ databaseChangeLog:
                 value: 211.52
             - column:
                 name: program_level
-                value: 1
+                value: Gold
