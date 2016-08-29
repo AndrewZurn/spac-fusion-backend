@@ -88,15 +88,18 @@ public class UserService {
     return lookup.getAmountCompleted().equals(amountCompleted);
   }
 
-  public Optional<Triplet<Boolean, List<UserExerciseOptionLookup>, FusionUser.ProgramLevel>> canUserUnlockWorkout(UUID userId) {
+  public Optional<Integer> getUserRemainingWorkoutUnlocks(UUID userId) {
     return find(userId).map(fusionUser -> {
       LocalDate startOfWeek = LocalDate.now().with(DayOfWeek.MONDAY);
       LocalDate endOfWeek = LocalDate.now().with(DayOfWeek.SUNDAY);
 
-      List<UserExerciseOptionLookup> userCompleteWorkouts = (List<UserExerciseOptionLookup>) userExerciseOptionLookupRepository.findAllByUserIdForWeek(userId, startOfWeek, endOfWeek);
+      // get the user's completed workouts for the week and their program level
+      Integer userCompleteWorkouts = userExerciseOptionLookupRepository.completedWorkoutsForWeek(userId, startOfWeek, endOfWeek);
       FusionUser.ProgramLevel userProgramLevel = FusionUser.ProgramLevel.fromValue(fusionUser.getProgramLevel());
-      boolean canUnlockWorkouts = userCompleteWorkouts.size() < userProgramLevel.getWorkoutLimit();
-      return new Triplet<>(canUnlockWorkouts, userCompleteWorkouts, userProgramLevel);
+
+      System.out.println("User program level limit: " + userProgramLevel.getWorkoutLimit());
+      System.out.println("User number of completed workouts: " + userCompleteWorkouts);
+      return userProgramLevel.getWorkoutLimit() - userCompleteWorkouts;
     });
   }
 

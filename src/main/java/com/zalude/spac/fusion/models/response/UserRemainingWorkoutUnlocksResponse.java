@@ -13,15 +13,10 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCanUnlockWorkoutResponse {
+public class UserRemainingWorkoutUnlocksResponse {
 
   @NonNull
   private UUID userId;
 
-  @NonNull
-  private Boolean canUnlockWorkout;
-
-  private int completedWorkoutsForWeek;
-
-  private int allowedWorkoutsPerWeek;
+  private int remainingWorkoutUnlocks;
 }

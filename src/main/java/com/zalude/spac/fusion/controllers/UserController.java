@@ -7,7 +7,7 @@ import com.zalude.spac.fusion.models.domain.FusionUser;
 import com.zalude.spac.fusion.models.domain.UserExerciseOptionLookup;
 import com.zalude.spac.fusion.models.domain.Workout;
 import com.zalude.spac.fusion.models.request.*;
-import com.zalude.spac.fusion.models.response.UserCanUnlockWorkoutResponse;
+import com.zalude.spac.fusion.models.response.UserRemainingWorkoutUnlocksResponse;
 import com.zalude.spac.fusion.models.response.UserCompletedWorkoutResponse;
 import com.zalude.spac.fusion.models.response.error.ResourceNotFoundResponse;
 import com.zalude.spac.fusion.services.ExerciseService;
@@ -66,11 +66,11 @@ public class UserController {
     return returnUserIfFound(userService.findByAuth0Id(auth0Id));
   }
 
-  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/can-unlock-workout")
-  public ResponseEntity canUserUnlockWorkout(@PathVariable UUID userId) {
-    return userService.canUserUnlockWorkout(userId)
+  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/remaining-workout-unlocks")
+  public ResponseEntity getUserRemainingWorkoutUnlocks(@PathVariable UUID userId) {
+    return userService.getUserRemainingWorkoutUnlocks(userId)
         .map(result -> new ResponseEntity(
-            new UserCanUnlockWorkoutResponse(userId, result.getValue0(), result.getValue1().size(), result.getValue2().getWorkoutLimit()),
+            new UserRemainingWorkoutUnlocksResponse(userId, result),
             HttpStatus.OK))
         .orElseGet(() -> new ResponseEntity(HttpStatus.NOT_FOUND));
   }

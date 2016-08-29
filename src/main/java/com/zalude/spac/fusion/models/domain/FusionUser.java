@@ -60,8 +60,8 @@ public class FusionUser {
 
   @Getter
   public enum ProgramLevel {
-    GOLD(2, "Gold", 6),
-    SILVER(1, "Silver", 4),
+    GOLD(2, "Gold", 7),
+    SILVER(1, "Silver", 3),
     BRONZE(0, "Bronze", 2);
 
     private int level;

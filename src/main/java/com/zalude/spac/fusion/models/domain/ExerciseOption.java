@@ -24,7 +24,7 @@ import java.util.*;
 @Setter
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = {"exercise", "alternativeExerciseOption", "children"})
+@ToString(exclude = {"exercise", "alternativeExerciseOption"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExerciseOption {
 

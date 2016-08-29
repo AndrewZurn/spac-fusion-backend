@@ -34,9 +34,13 @@ public interface UserExerciseOptionLookupRepository extends JpaRepository<UserEx
   Iterable<UserExerciseOptionLookup> findAllByUserIdAndWorkoutId(UUID userId, UUID workoutId);
 
   @Query("SELECT u FROM UserExerciseOptionLookup u " +
-      "WHERE u.workout.workoutDate BETWEEN :startOfWeek AND :endOfWeek " +
-      "AND u.user.id = :userId")
+      "WHERE u.workout.workoutDate BETWEEN :startOfWeek AND :endOfWeek AND u.user.id = :userId")
   Iterable<UserExerciseOptionLookup> findAllByUserIdForWeek(@Param("userId") UUID userId,
                                                             @Param("startOfWeek") LocalDate startOfWeek,
                                                             @Param("endOfWeek") LocalDate endOfWeek);
+  @Query("SELECT count(distinct u.workout.id) FROM UserExerciseOptionLookup u " +
+      "WHERE u.workout.workoutDate BETWEEN :startOfWeek AND :endOfWeek AND u.user.id = :userId")
+  Integer completedWorkoutsForWeek(@Param("userId") UUID userId,
+                                   @Param("startOfWeek") LocalDate startOfWeek,
+                                   @Param("endOfWeek") LocalDate endOfWeek);
 }
