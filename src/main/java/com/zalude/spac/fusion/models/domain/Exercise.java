@@ -25,7 +25,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Exercise {
 
   @Id

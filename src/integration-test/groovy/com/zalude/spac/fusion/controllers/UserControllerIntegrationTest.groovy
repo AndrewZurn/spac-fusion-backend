@@ -144,7 +144,8 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         })
 
         def lookupResponseList = testWorkout.exercise.exerciseOptions.collect { option ->
-            new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(option.id, option.name, option.description, option.type, option.targetAmount, "25")
+            new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(option.id, option.name, option.description,
+                    option.type, option.targetAmount, option.duration, "25")
         }
         def expectedResponse = new UserCompletedWorkoutResponse(testWorkout.id, testWorkout.duration, testWorkout.workoutDate,
                 testWorkout.exercise.id, testWorkout.exercise.name, testWorkout.exercise.instructions, lookupResponseList)
@@ -166,7 +167,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
                 it.exerciseOptionId == completedResult.exerciseOptionId
             }
             completedResult.exerciseOptionId == expectedResponseResult.exerciseOptionId
-            completedResult.amountCompleted == expectedResponseResult.amountCompleted
+            completedResult.result == expectedResponseResult.result
             completedResult.description == expectedResponseResult.description
             completedResult.name == expectedResponseResult.name
             completedResult.targetAmount == expectedResponseResult.targetAmount
@@ -176,8 +177,8 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
 
     def "update a completed workout/exercise option lookups for a user"() {
         given:
-        def newAmountCompleted = "500"
-        def request = new UpdateCompletedWorkoutRequest(newAmountCompleted)
+        def newResult = "500"
+        def request = new UpdateCompletedWorkoutRequest(newResult)
         def updateUrl = serviceURI("/${testFusionUser.id}/workouts/lookup/${testUserExerciseOptionLookup.id}")
         def findUrl = serviceURI("/${testFusionUser.id}/workouts/${testWorkout.id}")
 
@@ -191,6 +192,6 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         findResult.statusCode == HttpStatus.OK
         userCompletedWorkout.results.find {
             it.exerciseOptionId == testUserExerciseOptionLookup.exerciseOption.id
-        }.amountCompleted == newAmountCompleted
+        }.result == newResult
     }
 }

@@ -66,7 +66,7 @@ public class FusionUser {
     private String name;
     private int workoutLimit;
 
-    private ProgramLevel(String name, int workoutLimit) {
+    ProgramLevel(String name, int workoutLimit) {
       this.name = name;
       this.workoutLimit = workoutLimit;
     }

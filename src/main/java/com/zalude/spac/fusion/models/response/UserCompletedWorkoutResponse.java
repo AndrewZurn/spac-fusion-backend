@@ -54,10 +54,11 @@ public class UserCompletedWorkoutResponse {
     @NonNull
     private String type;
 
-    @NonNull
     private String targetAmount;
 
+    private String duration;
+
     @NonNull
-    private String amountCompleted;
+    private String result; // should be the result/score of the user to be compared against the targetAmount.
   }
 }

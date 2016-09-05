@@ -25,9 +25,9 @@ public interface UserExerciseOptionLookupRepository extends JpaRepository<UserEx
 
   @Modifying
   @Transactional
-  @Query("UPDATE UserExerciseOptionLookup u SET u.amountCompleted = :amountCompleted where u.id = :userExerciseOptionLookupId")
+  @Query("UPDATE UserExerciseOptionLookup u SET u.result = :result where u.id = :userExerciseOptionLookupId")
   void updateLookup(@Param("userExerciseOptionLookupId") UUID userExerciseOptionLookupId,
-                    @Param("amountCompleted") String amountCompleted);
+                    @Param("result") String result);
 
   List<UserExerciseOptionLookup> findAllByUserId(UUID userId, Pageable pageable);
 

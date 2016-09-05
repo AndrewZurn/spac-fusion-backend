@@ -25,11 +25,12 @@ public class CreateOrUpdateExerciseOptionRequest {
 
     private String description;
 
-    @NotBlank(message = "Please provide the type that this exercise option is (ie. rep-based, time-based, etc.")
+    @NotBlank(message = "Please provide the type that this exercise option.")
     private String type;
 
-    @NotBlank(message = "Please provide the target amount for this exercise option (ie. 50 if rep-based, 2 mins if time-based, etc.)")
     private String targetAmount;
+
+    private String duration;
 
     private CreateOrUpdateExerciseOptionRequest alternativeExerciseOption;
 }

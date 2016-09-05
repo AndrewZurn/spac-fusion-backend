@@ -55,8 +55,9 @@ databaseChangeLog:
                 - column:
                     name: "target_amount"
                     type: "text"
-                    constraints:
-                      nullable: false
+                - column:
+                    name: "duration"
+                    type: "text"
                 - column:
                     name: "alternative_exercise_option_id"
                     type: "uuid"
@@ -133,7 +134,7 @@ databaseChangeLog:
                     constraints:
                       nullable: false
                 - column:
-                    name: "amount_completed"
+                    name: "result"
                     type: "text"
                     constraints:
                       nullable: false

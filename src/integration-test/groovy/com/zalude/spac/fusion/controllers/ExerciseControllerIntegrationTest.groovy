@@ -23,13 +23,14 @@ class ExerciseControllerIntegrationTest extends ControllerTestBase implements In
     private List<CreateOrUpdateExerciseOptionRequest> createExerciseOptions
 
     def setup() {
-        exerciseRepository.save(testExercise)
+        this.testExercise = exerciseRepository.save(testExercise)
 
         createExerciseOptions = testExerciseOptionsList.stream().map { option ->
             def alternativeOption = new CreateOrUpdateExerciseOptionRequest(UUID.randomUUID(),
-                    "Modified: ${option.name}", "Modified ${option.description}", option.type, option.targetAmount, null)
-            new CreateOrUpdateExerciseOptionRequest(UUID.randomUUID(), option.name,
-                    option.description, option.type, option.targetAmount, alternativeOption)
+                    "Modified: ${option.name}", "Modified ${option.description}", option.type,
+                    option.targetAmount, option.duration, null)
+            new CreateOrUpdateExerciseOptionRequest(UUID.randomUUID(), option.name, option.description,
+                    option.type, option.targetAmount, option.duration, alternativeOption)
         }.collect(Collectors.toList())
 
         createExerciseRequestBody = new CreateOrUpdateExerciseRequest("New Pushup Routine", "Now get on the ground!", createExerciseOptions)

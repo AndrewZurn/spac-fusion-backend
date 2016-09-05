@@ -33,7 +33,7 @@ public class UserCompletedWorkoutRequest {
     private UUID exerciseOptionId;
 
     @NotNull
-    private String amountCompleted;
+    private String result;
 
   }
   

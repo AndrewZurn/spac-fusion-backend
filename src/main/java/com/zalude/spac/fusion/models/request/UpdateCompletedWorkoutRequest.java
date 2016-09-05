@@ -16,5 +16,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UpdateCompletedWorkoutRequest {
 
-  private String amountCompleted;
+  private String result;
 }

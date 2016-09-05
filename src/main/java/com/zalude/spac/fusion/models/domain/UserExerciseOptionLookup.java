@@ -43,7 +43,7 @@ public class UserExerciseOptionLookup {
   private Workout workout;
 
   @NonNull
-  private String amountCompleted;
+  private String result;
 
   @Tolerate
   public UserExerciseOptionLookup() {

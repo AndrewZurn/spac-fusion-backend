@@ -24,10 +24,11 @@ trait IntegrationTestData {
     public void setUp() throws Exception {
         println "Setting up test data..."
         this.testExerciseOptionsList = [
-                new ExerciseOption(UUID.fromString("ffebed48-9272-4c44-85fb-a24dff1e6ae2"), "Push Ups", "Repetitions", "50"),
-                new ExerciseOption(UUID.fromString("147fb790-7e8c-4776-8b30-9863c45bfa4b"), "Sit Ups", "Repetitions", "50"),
-                new ExerciseOption(UUID.fromString("4fc3ff86-ef20-4d34-9aed-4415919a8e65"), "Pull Ups", "Repetitions", "10")
+                new ExerciseOption(UUID.fromString("ffebed48-9272-4c44-85fb-a24dff1e6ae2"), "Push Ups", "AMRAP"),
+                new ExerciseOption(UUID.fromString("147fb790-7e8c-4776-8b30-9863c45bfa4b"), "Sit Ups", "AMRAP"),
+                new ExerciseOption(UUID.fromString("4fc3ff86-ef20-4d34-9aed-4415919a8e65"), "Pull Ups", "AMRAP")
         ]
+        this.testExerciseOptionsList = this.testExerciseOptionsList.each { it.setDuration("1 minute") }
 
         this.testExercise = new Exercise("Traditional Core and Upper Body", "Doing some good ol' push/sit/pull ups", testExerciseOptionsList)
         this.testExercise.id = testExerciseId

@@ -172,7 +172,7 @@ public class UserController {
   public ResponseEntity updateCompletedWorkout(@PathVariable UUID userId,
                                                @PathVariable UUID userExerciseOptionLookupId,
                                                @RequestBody @Valid UpdateCompletedWorkoutRequest completedWorkoutRequest) {
-    val result = this.userService.updateUserExerciseOptionLookup(userId, userExerciseOptionLookupId, completedWorkoutRequest.getAmountCompleted());
+    val result = this.userService.updateUserExerciseOptionLookup(userId, userExerciseOptionLookupId, completedWorkoutRequest.getResult());
     if (result) {
       return new ResponseEntity(HttpStatus.NO_CONTENT);
     } else {
@@ -213,8 +213,9 @@ public class UserController {
   private Function<UserExerciseOptionLookup, UserCompletedWorkoutResponse.CompletedExerciseOptionResponse> asUserCompletedExerciseResponse() {
     return lookup -> {
       ExerciseOption exerciseOption = lookup.getExerciseOption();
-      return new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(lookup.getExerciseOption().getId(), exerciseOption.getName(),
-          exerciseOption.getDescription(), exerciseOption.getType(), exerciseOption.getTargetAmount(), lookup.getAmountCompleted());
+      return new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(lookup.getExerciseOption().getId(),
+          exerciseOption.getName(), exerciseOption.getDescription(), exerciseOption.getType(),
+          exerciseOption.getTargetAmount(), exerciseOption.getDuration(), lookup.getResult());
     };
   }
 
@@ -255,7 +256,7 @@ public class UserController {
     // map the results into a list of user exercise option lookups
     return present.stream()
         .map(pair ->
-            new UserExerciseOptionLookup(UUID.randomUUID(), user, pair.getValue1().get(), workout, pair.getValue0().getAmountCompleted()))
+            new UserExerciseOptionLookup(UUID.randomUUID(), user, pair.getValue1().get(), workout, pair.getValue0().getResult()))
         .collect(Collectors.toList());
   }
 
