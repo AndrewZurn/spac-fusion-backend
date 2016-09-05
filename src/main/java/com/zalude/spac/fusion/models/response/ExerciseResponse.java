@@ -3,6 +3,7 @@ package com.zalude.spac.fusion.models.response;
 import com.zalude.spac.fusion.models.domain.Exercise;
 import com.zalude.spac.fusion.models.domain.ExerciseOption;
 import lombok.*;
+import lombok.experimental.Tolerate;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@NoArgsConstructor
 @ToString
 public class ExerciseResponse {
 

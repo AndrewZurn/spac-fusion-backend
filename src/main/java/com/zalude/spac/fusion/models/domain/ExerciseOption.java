@@ -50,10 +50,6 @@ public class ExerciseOption {
   @JsonBackReference
   private Exercise exercise;
 
-  @Tolerate
-  ExerciseOption() {
-  }
-
   @Getter
   public enum ExerciseOptionType {
     AMRAP("AMRAP", "number"),
@@ -80,5 +76,8 @@ public class ExerciseOption {
       throw new IllegalArgumentException("ExerciseOption of value: " + value + " does not exist.");
     }
   }
+
+  @Tolerate
+  public ExerciseOption() {}
 
 }

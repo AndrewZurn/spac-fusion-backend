@@ -5,6 +5,7 @@ import com.zalude.spac.fusion.ControllerTestBase
 import com.zalude.spac.fusion.models.domain.Exercise
 import com.zalude.spac.fusion.models.request.CreateOrUpdateExerciseOptionRequest
 import com.zalude.spac.fusion.models.request.CreateOrUpdateExerciseRequest
+import com.zalude.spac.fusion.models.response.ExerciseResponse
 import com.zalude.spac.fusion.repositories.ExerciseRepository
 import org.springframework.http.HttpEntity
 import org.springframework.http.ResponseEntity
@@ -72,7 +73,7 @@ class ExerciseControllerIntegrationTest extends ControllerTestBase implements In
                 .collect(Collectors.toList())
 
         when:
-        def createExerciseResult = restTemplate.postForEntity(serviceURI(), createExerciseRequest, Exercise.class)
+        def createExerciseResult = restTemplate.postForEntity(serviceURI(), createExerciseRequest, ExerciseResponse.class)
 
         then:
         createExerciseResult.body.name == createExerciseRequestBody.name
@@ -80,8 +81,10 @@ class ExerciseControllerIntegrationTest extends ControllerTestBase implements In
         createExerciseResult.body.exerciseOptions.size() == createExerciseOptions.size()
         createExerciseResult.body.exerciseOptions.forEach { option ->
             option.name in createExerciseOptionRequestNames
+            option.workoutDisplayType == 'number'
             option.alternativeExerciseOption.name == "Modified: ${option.name}"
             option.alternativeExerciseOption.description == "Modified: ${option.description}"
+            option.alternativeExerciseOption.workoutDisplayType == 'number'
         }
     }
 
