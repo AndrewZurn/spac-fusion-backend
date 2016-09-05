@@ -181,7 +181,7 @@ public class UserController {
   }
 
   private FusionUser toDomain(UserRequest userRequest, Optional<UUID> userId) throws ResourceValidationException {
-    String programLevel = FusionUser.ProgramLevel.valueOf(userRequest.getProgramLevel()).getName();
+    String programLevel = FusionUser.ProgramLevel.valueOf(userRequest.getProgramLevel().toUpperCase()).getName();
     return new FusionUser(userId.orElseGet(UUID::randomUUID), userRequest.getAuth0Id(), userRequest.getFirstName(), userRequest.getLastName(),
         userRequest.getUsername(), userRequest.getEmail(), userRequest.getAge(), userRequest.getHeight(), userRequest.getWeight(),
         programLevel);
