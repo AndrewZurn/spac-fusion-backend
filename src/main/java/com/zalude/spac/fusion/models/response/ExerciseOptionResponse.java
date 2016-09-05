@@ -15,15 +15,18 @@ import java.util.UUID;
 @Setter
 @ToString
 public class ExerciseOptionResponse extends ExerciseOption {
-  private String workoutDisplayType;
+
+  @NonNull
+  private String inputType;
+
   private ExerciseOptionResponse alternativeExerciseOption;
 
   public ExerciseOptionResponse(UUID id, String name, String type, String duration,
-                                String workoutDisplayType, String targetAmount, ExerciseOptionResponse alternativeExerciseOption) {
+                                String inputType, String targetAmount, ExerciseOptionResponse alternativeExerciseOption) {
     super(id, name, type);
     this.setTargetAmount(targetAmount);
     this.setDuration(duration);
-    this.workoutDisplayType = workoutDisplayType;
+    this.inputType = inputType;
     this.alternativeExerciseOption = alternativeExerciseOption;
   }
 

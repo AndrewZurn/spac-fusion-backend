@@ -81,10 +81,10 @@ class ExerciseControllerIntegrationTest extends ControllerTestBase implements In
         createExerciseResult.body.exerciseOptions.size() == createExerciseOptions.size()
         createExerciseResult.body.exerciseOptions.forEach { option ->
             option.name in createExerciseOptionRequestNames
-            option.workoutDisplayType == 'number'
+            option.inputType == 'number'
             option.alternativeExerciseOption.name == "Modified: ${option.name}"
             option.alternativeExerciseOption.description == "Modified: ${option.description}"
-            option.alternativeExerciseOption.workoutDisplayType == 'number'
+            option.alternativeExerciseOption.inputType == 'number'
         }
     }
 

@@ -154,7 +154,7 @@ public class ExerciseController {
     return exerciseOption;
   }
 
-  private static ExerciseResponse toResponse(Exercise exercise) {
+  static ExerciseResponse toResponse(Exercise exercise) {
     val exerciseOptionResponses = exercise.getExerciseOptions().stream()
         .map(ExerciseController::toResponse)
         .collect(Collectors.toList());
@@ -169,7 +169,7 @@ public class ExerciseController {
 
     return new ExerciseOptionResponse(exerciseOption.getId(), exerciseOption.getName(),
         exerciseOption.getType(), exerciseOption.getDuration(),
-        ExerciseOption.ExerciseOptionType.valueOf(exerciseOption.getType().toUpperCase()).getWorkoutDisplayType(),
+        ExerciseOption.ExerciseOptionType.valueOf(exerciseOption.getType().toUpperCase()).getInputType(),
         exerciseOption.getTargetAmount(), alternativeExerciseOptionResponse);
   }
 }

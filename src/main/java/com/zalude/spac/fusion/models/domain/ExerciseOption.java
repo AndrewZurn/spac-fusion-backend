@@ -60,11 +60,11 @@ public class ExerciseOption {
     TWENTY_TEN("20:10", "NA");
 
     private String value;
-    private String workoutDisplayType;
+    private String inputType;
 
-    ExerciseOptionType(String value, String workoutDisplayType) {
+    ExerciseOptionType(String value, String inputType) {
       this.value = value;
-      this.workoutDisplayType = workoutDisplayType;
+      this.inputType = inputType;
     }
 
     public static ExerciseOptionType fromValue(String value) {

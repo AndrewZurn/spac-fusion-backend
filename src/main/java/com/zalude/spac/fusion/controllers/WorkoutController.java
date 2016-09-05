@@ -3,6 +3,7 @@ package com.zalude.spac.fusion.controllers;
 import com.zalude.spac.fusion.exceptions.ResourceValidationException;
 import com.zalude.spac.fusion.models.domain.Workout;
 import com.zalude.spac.fusion.models.request.CreateOrUpdateWorkoutRequest;
+import com.zalude.spac.fusion.models.response.WorkoutResponse;
 import com.zalude.spac.fusion.models.response.error.BadRequestResponse;
 import com.zalude.spac.fusion.services.ExerciseService;
 import com.zalude.spac.fusion.services.WorkoutService;
@@ -21,6 +22,7 @@ import javax.validation.Valid;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -47,7 +49,11 @@ public class WorkoutController {
 
   @RequestMapping(method = GET)
   public ResponseEntity getAllWorkouts() {
-    return new ResponseEntity(this.workoutService.findAllWorkouts(), HttpStatus.OK);
+    List<Workout> workouts = (List<Workout>) this.workoutService.findAllWorkouts();
+    val workoutsResponse = workouts.stream()
+        .map(WorkoutController::toResponse)
+        .collect(Collectors.toList());
+    return new ResponseEntity(workoutsResponse, HttpStatus.OK);
   }
 
   @RequestMapping(method = GET, value = "/{workoutId}")
@@ -95,7 +101,7 @@ public class WorkoutController {
         successStatus = HttpStatus.CREATED;
       }
 
-      return new ResponseEntity(savedWorkout, successStatus);
+      return new ResponseEntity(toResponse(savedWorkout), successStatus);
     } catch (ResourceValidationException e) {
       return new ResponseEntity(new BadRequestResponse(e.getErrorsById(), e.getErrorsByName(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }
@@ -103,7 +109,7 @@ public class WorkoutController {
 
   private ResponseEntity returnWorkoutIfFound(Optional<Workout> workout) {
     if (workout.isPresent()) {
-      return new ResponseEntity(workout.get(), HttpStatus.OK);
+      return new ResponseEntity(toResponse(workout.get()), HttpStatus.OK);
     } else {
       return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
@@ -121,5 +127,12 @@ public class WorkoutController {
       val errors = Collections.singletonMap(exerciseId, Collections.singletonList("Could not find Exercise."));
       throw new ResourceValidationException(errors, null, null);
     }
+  }
+
+  private static WorkoutResponse toResponse(Workout workout) {
+    val workoutResponse = new WorkoutResponse(workout.getId(), workout.getDuration(),
+        workout.getWorkoutDate(), ExerciseController.toResponse(workout.getExercise()));
+    workoutResponse.setPreviewText(workout.getPreviewText());
+    return workoutResponse;
   }
 }
