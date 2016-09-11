@@ -81,12 +81,6 @@ public class UserService {
     return userExerciseOptionLookupRepository.save(userExerciseOptionLookups);
   }
 
-  public boolean updateUserExerciseOptionLookup(UUID userId, UUID userExerciseOptionLookupId, String result) {
-    userExerciseOptionLookupRepository.updateLookup(userExerciseOptionLookupId, result);
-    val lookup = userExerciseOptionLookupRepository.findOne(userExerciseOptionLookupId);
-    return lookup.getResult().equals(result);
-  }
-
   public Optional<Integer> getUserRemainingWorkoutUnlocks(UUID userId) {
     return find(userId).map(fusionUser -> {
       LocalDate startOfWeek = LocalDate.now().with(DayOfWeek.MONDAY);

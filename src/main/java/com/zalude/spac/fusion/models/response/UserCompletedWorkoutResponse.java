@@ -44,6 +44,9 @@ public class UserCompletedWorkoutResponse {
   public static class CompletedExerciseOptionResponse {
 
     @NonNull
+    private UUID lookupId;
+
+    @NonNull
     private UUID exerciseOptionId;
 
     @NonNull

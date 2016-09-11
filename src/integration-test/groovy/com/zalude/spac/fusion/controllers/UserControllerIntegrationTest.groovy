@@ -4,7 +4,6 @@ import com.zalude.spac.fusion.ControllerTestBase
 import com.zalude.spac.fusion.IntegrationTestData
 import com.zalude.spac.fusion.models.domain.FusionUser
 import com.zalude.spac.fusion.models.request.CreateUserRequest
-import com.zalude.spac.fusion.models.request.UpdateCompletedWorkoutRequest
 import com.zalude.spac.fusion.models.request.UpdateUserRequest
 import com.zalude.spac.fusion.models.request.UserCompletedWorkoutRequest
 import com.zalude.spac.fusion.models.response.UserCompletedWorkoutResponse
@@ -140,12 +139,12 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
     def "add a completed workout/exercise option lookups for a user"() {
         given:
         def createCompletedWorkoutRequest = new UserCompletedWorkoutRequest(testWorkout.exercise.exerciseOptions.collect { option ->
-            new UserCompletedWorkoutRequest.CompletedExerciseResultRequest(option.id, "25")
+            new UserCompletedWorkoutRequest.CompletedExerciseResultRequest(null, option.id, "25")
         })
 
         def lookupResponseList = testWorkout.exercise.exerciseOptions.collect { option ->
-            new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(option.id, option.name, option.description,
-                    option.type, option.targetAmount, option.duration, "25")
+            new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(UUID.randomUUID(), option.id, option.name,
+                    option.description, option.type, option.targetAmount, option.duration, "25")
         }
         def expectedResponse = new UserCompletedWorkoutResponse(testWorkout.id, testWorkout.duration, testWorkout.workoutDate,
                 testWorkout.exercise.id, testWorkout.exercise.name, testWorkout.exercise.instructions, lookupResponseList)
@@ -166,6 +165,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
             def expectedResponseResult = expectedResponse.results.find {
                 it.exerciseOptionId == completedResult.exerciseOptionId
             }
+            completedResult.lookupId != null
             completedResult.exerciseOptionId == expectedResponseResult.exerciseOptionId
             completedResult.result == expectedResponseResult.result
             completedResult.description == expectedResponseResult.description
@@ -173,25 +173,5 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
             completedResult.targetAmount == expectedResponseResult.targetAmount
             completedResult.type == expectedResponseResult.type
         }
-    }
-
-    def "update a completed workout/exercise option lookups for a user"() {
-        given:
-        def newResult = "500"
-        def request = new UpdateCompletedWorkoutRequest(newResult)
-        def updateUrl = serviceURI("/${testFusionUser.id}/workouts/lookup/${testUserExerciseOptionLookup.id}")
-        def findUrl = serviceURI("/${testFusionUser.id}/workouts/${testWorkout.id}")
-
-        when:
-        def result = restTemplate.postForEntity(updateUrl, request, Void.class)
-        def findResult = restTemplate.getForEntity(findUrl, UserCompletedWorkoutResponse.class)
-        def userCompletedWorkout = findResult.body
-
-        then:
-        result.statusCode == HttpStatus.NO_CONTENT
-        findResult.statusCode == HttpStatus.OK
-        userCompletedWorkout.results.find {
-            it.exerciseOptionId == testUserExerciseOptionLookup.exerciseOption.id
-        }.result == newResult
     }
 }
