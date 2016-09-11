@@ -2,10 +2,7 @@ package com.zalude.spac.fusion.controllers;
 
 import com.zalude.spac.fusion.exceptions.ResourceNotFoundException;
 import com.zalude.spac.fusion.exceptions.ResourceValidationException;
-import com.zalude.spac.fusion.models.domain.ExerciseOption;
-import com.zalude.spac.fusion.models.domain.FusionUser;
-import com.zalude.spac.fusion.models.domain.UserExerciseOptionLookup;
-import com.zalude.spac.fusion.models.domain.Workout;
+import com.zalude.spac.fusion.models.domain.*;
 import com.zalude.spac.fusion.models.request.*;
 import com.zalude.spac.fusion.models.response.UserRemainingWorkoutUnlocksResponse;
 import com.zalude.spac.fusion.models.response.UserCompletedWorkoutResponse;
@@ -187,12 +184,16 @@ public class UserController {
   private Function<Map.Entry<Workout, List<UserExerciseOptionLookup>>, UserCompletedWorkoutResponse> asUserCompletedWorkoutResponse() {
     return workoutListEntry -> {
       final Workout workout = workoutListEntry.getKey();
-      final List<UserCompletedWorkoutResponse.CompletedExerciseOptionResponse> responseList = workoutListEntry.getValue().stream()
+      final List<UserCompletedWorkoutResponse.CompletedExerciseOptionResponse> optionResponseList = workoutListEntry.getValue().stream()
           .map(asUserCompletedExerciseResponse())
           .collect(Collectors.toList());
+      final Exercise exercise = workout.getExercise();
+      final UserCompletedWorkoutResponse.CompletedExerciseResponse exerciseResponse =
+          new UserCompletedWorkoutResponse.CompletedExerciseResponse(exercise.getId(), exercise.getName(),
+              exercise.getInstructions(), optionResponseList);
 
-      return new UserCompletedWorkoutResponse(workout.getId(), workout.getDuration(), workout.getWorkoutDate(), workout.getExercise().getId(),
-          workout.getExercise().getName(), workout.getExercise().getInstructions(), responseList);
+      return new UserCompletedWorkoutResponse(workout.getId(), workout.getDuration(),
+          workout.getWorkoutDate(), exerciseResponse, workout.getPreviewText());
     };
   }
 
@@ -200,8 +201,8 @@ public class UserController {
     return lookup -> {
       ExerciseOption exerciseOption = lookup.getExerciseOption();
       return new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(lookup.getId(),
-          lookup.getExerciseOption().getId(), exerciseOption.getName(), exerciseOption.getDescription(),
-          exerciseOption.getType(), exerciseOption.getTargetAmount(), exerciseOption.getDuration(), lookup.getResult());
+          lookup.getExerciseOption().getId(), exerciseOption.getName(), exerciseOption.getType(),
+          lookup.getResult(), exerciseOption.getDescription(), exerciseOption.getTargetAmount(), exerciseOption.getDuration());
     };
   }
 

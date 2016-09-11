@@ -144,13 +144,16 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
 
         def lookupResponseList = testWorkout.exercise.exerciseOptions.collect { option ->
             new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(UUID.randomUUID(), option.id, option.name,
-                    option.description, option.type, option.targetAmount, option.duration, "25")
+                    option.type, "25", option.description, option.targetAmount, option.duration)
         }
-        def expectedResponse = new UserCompletedWorkoutResponse(testWorkout.id, testWorkout.duration, testWorkout.workoutDate,
-                testWorkout.exercise.id, testWorkout.exercise.name, testWorkout.exercise.instructions, lookupResponseList)
+        def expectedExerciseResponse = new UserCompletedWorkoutResponse.CompletedExerciseResponse(testWorkout.exercise.id,
+                testWorkout.exercise.name, testWorkout.exercise.instructions, lookupResponseList)
+        def expectedResponse = new UserCompletedWorkoutResponse(testWorkout.id, testWorkout.duration,
+                testWorkout.workoutDate, expectedExerciseResponse, testWorkout.previewText)
 
         when:
-        def result = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/workouts/${testWorkout.id}"), createCompletedWorkoutRequest, UserCompletedWorkoutResponse.class)
+        def result = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/workouts/${testWorkout.id}"),
+                createCompletedWorkoutRequest, UserCompletedWorkoutResponse.class)
         def userCompletedWorkout = result.body
 
         then:
@@ -158,11 +161,11 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         userCompletedWorkout.workoutId == expectedResponse.workoutId
         userCompletedWorkout.duration == expectedResponse.duration
         userCompletedWorkout.completedDate == expectedResponse.completedDate
-        userCompletedWorkout.exerciseId == expectedResponse.exerciseId
-        userCompletedWorkout.exerciseName == expectedResponse.exerciseName
-        userCompletedWorkout.exerciseDescription == expectedResponse.exerciseDescription
-        userCompletedWorkout.results.each { completedResult ->
-            def expectedResponseResult = expectedResponse.results.find {
+        userCompletedWorkout.exercise.id == expectedResponse.exercise.id
+        userCompletedWorkout.exercise.name == expectedResponse.exercise.name
+        userCompletedWorkout.exercise.instructions == expectedResponse.exercise.instructions
+        userCompletedWorkout.exercise.results.each { completedResult ->
+            def expectedResponseResult = expectedResponse.exercise.results.find {
                 it.exerciseOptionId == completedResult.exerciseOptionId
             }
             completedResult.lookupId != null
