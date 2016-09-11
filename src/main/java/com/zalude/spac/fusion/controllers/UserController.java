@@ -168,7 +168,7 @@ public class UserController {
   }
 
   // UPDATE COMPLETED USER WORKOUT
-  @RequestMapping(method = RequestMethod.POST, value = "/{userId}/workouts/lookup/{userExerciseOptionLookupId}")
+  @RequestMapping(method = RequestMethod.PUT, value = "/{userId}/workouts/lookup/{userExerciseOptionLookupId}")
   public ResponseEntity updateCompletedWorkout(@PathVariable UUID userId,
                                                @PathVariable UUID userExerciseOptionLookupId,
                                                @RequestBody @Valid UpdateCompletedWorkoutRequest completedWorkoutRequest) {
