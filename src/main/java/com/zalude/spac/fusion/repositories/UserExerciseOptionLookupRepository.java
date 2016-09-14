@@ -5,14 +5,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -38,9 +36,16 @@ public interface UserExerciseOptionLookupRepository extends JpaRepository<UserEx
   Iterable<UserExerciseOptionLookup> findAllByUserIdForWeek(@Param("userId") UUID userId,
                                                             @Param("startOfWeek") LocalDate startOfWeek,
                                                             @Param("endOfWeek") LocalDate endOfWeek);
+
   @Query("SELECT count(distinct u.workout.id) FROM UserExerciseOptionLookup u " +
       "WHERE u.workout.workoutDate BETWEEN :startOfWeek AND :endOfWeek AND u.user.id = :userId")
   Integer completedWorkoutsForWeek(@Param("userId") UUID userId,
                                    @Param("startOfWeek") LocalDate startOfWeek,
                                    @Param("endOfWeek") LocalDate endOfWeek);
+
+  @Modifying
+  @Transactional
+  @Query("DELETE FROM UserExerciseOptionLookup u WHERE u.workout.id = :workoutId AND u.user.id = :userId")
+  void deleteUserPreviousLookups(@Param("workoutId") UUID workoutId,
+                                 @Param("userId") UUID userId);
 }

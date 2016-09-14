@@ -77,7 +77,15 @@ public class UserService {
     }
   }
 
-  public Iterable<UserExerciseOptionLookup> saveUserExerciseOptionLookup(List<UserExerciseOptionLookup> userExerciseOptionLookups) throws ResourceValidationException, ResourceNotFoundException {
+  public Iterable<UserExerciseOptionLookup> saveUserExerciseOptionLookup(List<UserExerciseOptionLookup> userExerciseOptionLookups)
+      throws ResourceValidationException, ResourceNotFoundException {
+    // attempt to delete the old lookups first
+    if (userExerciseOptionLookups.size() > 0) {
+      val workoutId = userExerciseOptionLookups.get(0).getWorkout().getId();
+      val userId = userExerciseOptionLookups.get(0).getUser().getId();
+      userExerciseOptionLookupRepository.deleteUserPreviousLookups(workoutId, userId);
+    }
+
     return userExerciseOptionLookupRepository.save(userExerciseOptionLookups);
   }
 

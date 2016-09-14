@@ -179,10 +179,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
                 completedWorkoutRequest, UserCompletedWorkoutResponse.class)
         def createBody = createResult.body
         def updateRequest = createCompletedWorkoutRequest()
-        updateRequest.results = updateRequest.results.each { result ->
-            result.lookupId = createBody.exercise.results.find { it.exerciseOptionId == result.exerciseOptionId }.lookupId
-            result.result = newResultValue
-        }
+        updateRequest.results = updateRequest.results.each { it.result = newResultValue }
 
         when:
         def updateResult = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/workouts/${testWorkout.id}"),
@@ -192,7 +189,8 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         then:
         updateBody.workoutId == createBody.workoutId
         updateBody.exercise.results.size() == 3
-        updateBody.exercise.results.lookupId == createBody.exercise.results.lookupId
+        // we've deleted the previous lookups, so we should get a new set of lookup Ids
+        updateBody.exercise.results.lookupId != createBody.exercise.results.lookupId
         updateBody.exercise.results.each { it.result == newResultValue }
         updateBody.exercise.results.result != createBody.exercise.results.result
     }

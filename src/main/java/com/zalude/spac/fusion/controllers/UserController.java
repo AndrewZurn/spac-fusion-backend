@@ -207,9 +207,14 @@ public class UserController {
   }
 
   private List<UserExerciseOptionLookup> toDomain(UserCompletedWorkoutRequest completedWorkoutRequest, UUID workoutId, UUID userId) throws ResourceValidationException {
+    if (completedWorkoutRequest.getResults().size() == 0) {
+      throw new ResourceValidationException("Can not save an empty list of exercise options for a given workout");
+    }
+
     // check if user exists
+    // TODO: these database-type of interactions should probably be validated in the service layer
     val user = userService.find(userId).orElseThrow(() -> {
-      final Map<UUID, List<String>> errors = Collections.singletonMap(userId, Collections.singletonList("Could not fintd User."));
+      final Map<UUID, List<String>> errors = Collections.singletonMap(userId, Collections.singletonList("Could not find User."));
       return new ResourceValidationException(errors, null, null);
     });
 
