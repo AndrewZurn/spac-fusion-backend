@@ -2,39 +2,39 @@ package com.zalude.spac.fusion.controllers
 
 import com.zalude.spac.fusion.IntegrationTestData;
 import com.zalude.spac.fusion.ControllerTestBase
-import com.zalude.spac.fusion.models.domain.Exercise
-import com.zalude.spac.fusion.models.request.CreateOrUpdateExerciseOptionRequest
+import com.zalude.spac.fusion.models.domain.Workout
 import com.zalude.spac.fusion.models.request.CreateOrUpdateExerciseRequest
+import com.zalude.spac.fusion.models.request.CreateOrUpdateWorkoutRequest
 import com.zalude.spac.fusion.models.response.ExerciseResponse
-import com.zalude.spac.fusion.repositories.ExerciseRepository
+import com.zalude.spac.fusion.repositories.WorkoutWithDateRepository
 import org.springframework.http.HttpEntity
 import org.springframework.http.ResponseEntity
 
 import javax.inject.Inject
 import java.util.stream.Collectors
 
-class ExerciseControllerIntegrationTest extends ControllerTestBase implements IntegrationTestData {
+class WorkoutByDateControllerIntegrationTest extends ControllerTestBase implements IntegrationTestData {
 
     String getBasePath() { "/exercises" }
 
     @Inject
-    private ExerciseRepository exerciseRepository
+    private WorkoutWithDateRepository exerciseRepository
 
-    private CreateOrUpdateExerciseRequest createExerciseRequestBody
-    private List<CreateOrUpdateExerciseOptionRequest> createExerciseOptions
+    private CreateOrUpdateWorkoutRequest createExerciseRequestBody
+    private List<CreateOrUpdateExerciseRequest> createExerciseOptions
 
     def setup() {
         this.testExercise = exerciseRepository.save(testExercise)
 
         createExerciseOptions = testExerciseOptionsList.stream().map { option ->
-            def alternativeOption = new CreateOrUpdateExerciseOptionRequest(UUID.randomUUID(),
+            def alternativeOption = new CreateOrUpdateExerciseRequest(UUID.randomUUID(),
                     "Modified: ${option.name}", "Modified ${option.description}", option.type,
-                    option.targetAmount, option.duration, null)
-            new CreateOrUpdateExerciseOptionRequest(UUID.randomUUID(), option.name, option.description,
-                    option.type, option.targetAmount, option.duration, alternativeOption)
+                    option.amount, option.duration, null)
+            new CreateOrUpdateExerciseRequest(UUID.randomUUID(), option.name, option.description,
+                    option.type, option.amount, option.duration, alternativeOption)
         }.collect(Collectors.toList())
 
-        createExerciseRequestBody = new CreateOrUpdateExerciseRequest("New Pushup Routine", "Now get on the ground!", createExerciseOptions)
+        createExerciseRequestBody = new CreateOrUpdateWorkoutRequest("New Pushup Routine", "Now get on the ground!", createExerciseOptions)
     }
 
     def cleanup() {
@@ -46,7 +46,7 @@ class ExerciseControllerIntegrationTest extends ControllerTestBase implements In
         exerciseRepository.deleteAll()
 
         when:
-        List<Exercise> result = restTemplate.getForObject(serviceURI(), List.class)
+        List<Workout> result = restTemplate.getForObject(serviceURI(), List.class)
 
         then:
         result.size() == 0
@@ -55,8 +55,8 @@ class ExerciseControllerIntegrationTest extends ControllerTestBase implements In
     def "get a list of workouts"() {
         given:
         when:
-        ResponseEntity<Exercise[]> result = restTemplate.getForEntity(serviceURI(), Exercise[].class)
-        Exercise actual = result.body[0]
+        ResponseEntity<Workout[]> result = restTemplate.getForEntity(serviceURI(), Workout[].class)
+        Workout actual = result.body[0]
 
         then:
         result.statusCode.value() == 200
@@ -66,7 +66,7 @@ class ExerciseControllerIntegrationTest extends ControllerTestBase implements In
     def "create a new exercise with a set of exercise options"() {
         given:
         exerciseRepository.deleteAll()
-        def createExerciseRequest = new HttpEntity<CreateOrUpdateExerciseRequest>(createExerciseRequestBody, headers)
+        def createExerciseRequest = new HttpEntity<CreateOrUpdateWorkoutRequest>(createExerciseRequestBody, headers)
 
         def createExerciseOptionRequestNames = createExerciseOptions.stream()
                 .map { option -> option.name }
@@ -91,10 +91,10 @@ class ExerciseControllerIntegrationTest extends ControllerTestBase implements In
     def "find the created exercise and options set"() {
         given:
         when:
-        List<Exercise> result = restTemplate.getForObject(serviceURI(), List.class)
+        List<Workout> result = restTemplate.getForObject(serviceURI(), List.class)
 
         then:
         result.size() == 1
-        result.get(0).exerciseOptions.size() == createExerciseOptions.size()
+        result.get(0).exercises.size() == createExerciseOptions.size()
     }
 }

@@ -2,28 +2,27 @@ package com.zalude.spac.fusion.repositories;
 
 import com.zalude.spac.fusion.models.domain.Workout;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Repository to access the {@link com.zalude.spac.fusion.models.domain.Workout}.
+ * Repository to access the {@link Workout}.
  *
  * @author Andrew Zurn (azurn)
  */
 @Repository
 public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
 
-  @Query("SELECT w FROM Workout w WHERE w.workoutDate = current_date")
-  Workout findTodaysWorkout();
-
-  @Query("SELECT w FROM Workout w WHERE w.workoutDate BETWEEN :dateStartRange AND :dateEndRange")
-  Iterable<Workout> findAllWorkouts(@Param("dateStartRange") LocalDate dateStartRange,
-                                    @Param("dateEndRange") LocalDate dateEndRange);
-
-  Workout findOneByWorkoutDate(LocalDate workoutDate);
+  /**
+   * Find Exercises where the name matches the given name and the id does not match the given name.
+   * This might be useful for such operations as finding if a name already exists but does not belong to the
+   * given Exercise for the given id.
+   *
+   * @param name The name of the Exercise to match on.
+   * @param id The id of the Exercise to exclude from the results.
+   * @return The Exercises that don't match the given id and that match the given name.
+   */
+  List<Workout> findByNameAndIdNot(String name, UUID id);
 }

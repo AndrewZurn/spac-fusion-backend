@@ -1,26 +1,22 @@
 package com.zalude.spac.fusion.controllers;
 
 import com.zalude.spac.fusion.exceptions.ResourceValidationException;
+import com.zalude.spac.fusion.exceptions.ResourceNotFoundException;
+import com.zalude.spac.fusion.models.domain.Exercise;
 import com.zalude.spac.fusion.models.domain.Workout;
+import com.zalude.spac.fusion.models.request.CreateOrUpdateExerciseRequest;
 import com.zalude.spac.fusion.models.request.CreateOrUpdateWorkoutRequest;
-import com.zalude.spac.fusion.models.response.WorkoutResponse;
 import com.zalude.spac.fusion.models.response.error.BadRequestResponse;
-import com.zalude.spac.fusion.services.ExerciseService;
+import com.zalude.spac.fusion.models.response.error.ResourceNotFoundResponse;
 import com.zalude.spac.fusion.services.WorkoutService;
 import lombok.NonNull;
 import lombok.val;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,107 +28,96 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
  * @author Andrew Zurn (azurn)
  */
 @RestController
-@RequestMapping(path = "/workouts")
+@RequestMapping("workouts")
 public class WorkoutController {
 
   @NonNull
   private WorkoutService workoutService;
 
-  @NonNull
-  private ExerciseService exerciseService;
-
   @Inject
-  public WorkoutController(WorkoutService workoutService, ExerciseService exerciseService) {
+  public WorkoutController(WorkoutService workoutService) {
     this.workoutService = workoutService;
-    this.exerciseService = exerciseService;
   }
 
   @RequestMapping(method = GET)
-  public ResponseEntity getAllWorkouts() {
-    List<Workout> workouts = (List<Workout>) this.workoutService.findAllWorkouts();
-    val workoutsResponse = workouts.stream()
-        .map(WorkoutController::toResponse)
-        .collect(Collectors.toList());
-    return new ResponseEntity(workoutsResponse, HttpStatus.OK);
+  public ResponseEntity<Iterable<Workout>> getAllWorkouts() {
+    return new ResponseEntity(workoutService.findAllWorkouts(), HttpStatus.OK);
   }
 
   @RequestMapping(method = GET, value = "/{workoutId}")
-  public ResponseEntity getWorkout(@PathVariable UUID workoutId) {
-    return returnWorkoutIfFound(this.workoutService.findWorkout(workoutId));
-  }
-
-  @RequestMapping(method = GET, value = "/today")
-  public ResponseEntity getTodaysWorkout() {
-    return returnWorkoutIfFound(this.workoutService.findTodaysWorkout());
-  }
-
-  @RequestMapping(method = GET, value = "/week")
-  public ResponseEntity getThisWeeksWorkouts() {
-    return new ResponseEntity(workoutService.findRemainingWorkoutsForWeek(), HttpStatus.OK);
-  }
-
-  @RequestMapping(method = GET, value = "/by-date/{workoutDate}")
-  public ResponseEntity getThisWeeksWorkouts(@PathVariable @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDate workoutDate) {
-    return returnWorkoutIfFound(workoutService.findWorkoutForDate(workoutDate));
-  }
-
-  @RequestMapping(method = POST)
-  public ResponseEntity createWorkout(@RequestBody @Valid CreateOrUpdateWorkoutRequest workoutRequest) {
-    return saveOrUpdateWorkout(workoutRequest, Optional.empty());
-  }
-
-  @RequestMapping(method = PUT, value = "/{workoutId}")
-  public ResponseEntity updateWorkout(@PathVariable UUID workoutId,
-                                      @RequestBody @Valid CreateOrUpdateWorkoutRequest workoutRequest) {
-    return saveOrUpdateWorkout(workoutRequest, Optional.of(workoutId));
-  }
-
-  public ResponseEntity saveOrUpdateWorkout(CreateOrUpdateWorkoutRequest workoutRequest, Optional<UUID> workoutId) {
-    try {
-      val workout = toDomain(workoutRequest, workoutId);
-
-      Workout savedWorkout;
-      HttpStatus successStatus;
-      if (workoutId.isPresent()) {
-        savedWorkout = workoutService.update(workout, workoutId.get());
-        successStatus = HttpStatus.OK;
-      } else {
-        savedWorkout = workoutService.create(workout);
-        successStatus = HttpStatus.CREATED;
-      }
-
-      return new ResponseEntity(toResponse(savedWorkout), successStatus);
-    } catch (ResourceValidationException e) {
-      return new ResponseEntity(new BadRequestResponse(e.getErrorsById(), e.getErrorsByName(), e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  private ResponseEntity returnWorkoutIfFound(Optional<Workout> workout) {
+  public ResponseEntity<Workout> getWorkout(@PathVariable UUID workoutId) {
+    val workout = workoutService.findExercise(workoutId);
     if (workout.isPresent()) {
-      return new ResponseEntity(toResponse(workout.get()), HttpStatus.OK);
+      return new ResponseEntity(workout.get(), HttpStatus.OK);
     } else {
       return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
   }
 
-  private Workout toDomain(CreateOrUpdateWorkoutRequest workoutRequest, Optional<UUID> workoutId) throws ResourceValidationException {
-    val exerciseId = workoutRequest.getExerciseId();
-    val exercise = exerciseService.findExercise(exerciseId);
-    if (exercise.isPresent()) {
-      val workout = new Workout(workoutId.orElseGet(UUID::randomUUID), workoutRequest.getDuration(),
-          workoutRequest.getWorkoutDate(), exercise.get());
-      workout.setPreviewText(workoutRequest.getPreviewText());
-      return workout;
-    } else {
-      val errors = Collections.singletonMap(exerciseId, Collections.singletonList("Could not find Exercise."));
-      throw new ResourceValidationException(errors, null, null);
+  @RequestMapping(method = POST)
+  public ResponseEntity createWorkout(@RequestBody @Valid CreateOrUpdateWorkoutRequest exerciseRequest) {
+    try {
+      return createOrUpdateWorkout(toDomain(exerciseRequest, UUID.randomUUID()), false);
+    } catch (IllegalArgumentException e) {
+      return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
   }
 
-  private static WorkoutResponse toResponse(Workout workout) {
-    val workoutResponse = new WorkoutResponse(workout.getId(), workout.getDuration(),
-        workout.getWorkoutDate(), ExerciseController.toResponse(workout.getExercise()));
-    workoutResponse.setPreviewText(workout.getPreviewText());
-    return workoutResponse;
+  @RequestMapping(method = PUT, value = "/{workoutId}")
+  public ResponseEntity updateWorkout(@PathVariable UUID exerciseId,
+                                      @RequestBody @Valid CreateOrUpdateWorkoutRequest exerciseRequest) {
+    try {
+      val exercise = toDomain(exerciseRequest, exerciseId);
+      return createOrUpdateWorkout(exercise, true);
+    } catch (IllegalArgumentException e) {
+      return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  private ResponseEntity createOrUpdateWorkout(Workout workout, boolean isUpdate) {
+    Workout savedWorkout;
+    HttpStatus successStatus;
+    try {
+      if (isUpdate) {
+        savedWorkout = workoutService.update(workout);
+        successStatus = HttpStatus.OK;
+      } else {
+        savedWorkout = workoutService.create(workout);
+        successStatus = HttpStatus.CREATED;
+      }
+    } catch (ResourceNotFoundException e) {
+      return new ResponseEntity(new ResourceNotFoundResponse(e.getId()), HttpStatus.NOT_FOUND);
+    } catch (ResourceValidationException e) {
+      return new ResponseEntity(new BadRequestResponse(e.getErrorsById(), e.getErrorsByName(), e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity(savedWorkout, successStatus);
+  }
+
+  private Workout toDomain(CreateOrUpdateWorkoutRequest exerciseRequest, UUID exerciseId) {
+    val workout = new Workout(exerciseRequest.getName(), exerciseRequest.getInstructions(), Collections.emptyList());
+    workout.setId(exerciseId);
+
+    val exerciseList = exerciseRequest.getExercises().stream()
+        .map(optionRequest -> toDomain(optionRequest, workout))
+        .collect(Collectors.toList());
+    workout.setExercises(exerciseList);
+    return workout;
+  }
+
+  private Exercise toDomain(CreateOrUpdateExerciseRequest exerciseOptionRequest, Workout workout) {
+    UUID exerciseIdToUser;
+    val exerciseOptionRequestId = exerciseOptionRequest.getId();
+    if (exerciseOptionRequestId != null) {
+      exerciseIdToUser = exerciseOptionRequestId;
+    } else {
+      exerciseIdToUser = UUID.randomUUID();
+    }
+
+    // create and set the proper fields on the ExerciseOption
+    val exercise = new Exercise(exerciseIdToUser, exerciseOptionRequest.getName());
+    exercise.setAmount(exerciseOptionRequest.getTargetAmount());
+    exercise.setWorkout(workout);
+
+    return exercise;
   }
 }

@@ -18,9 +18,8 @@ import java.util.UUID;
 @Setter
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = "exerciseOption")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserExerciseOptionLookup {
+public class UserCompletedWorkoutLookup {
 
   @Id
   @Type(type = "pg-uuid")
@@ -34,18 +33,13 @@ public class UserExerciseOptionLookup {
 
   @NonNull
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "exercise_option_id")
-  private ExerciseOption exerciseOption;
-
-  @NonNull
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "workout_id")
-  private Workout workout;
+  @JoinColumn(name = "workout_with_date_id")
+  private WorkoutWithDate workoutWithDate;
 
   @NonNull
   private String result;
 
   @Tolerate
-  public UserExerciseOptionLookup() {
+  public UserCompletedWorkoutLookup() {
   }
 }

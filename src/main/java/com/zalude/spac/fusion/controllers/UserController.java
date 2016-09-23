@@ -7,9 +7,9 @@ import com.zalude.spac.fusion.models.request.*;
 import com.zalude.spac.fusion.models.response.UserRemainingWorkoutUnlocksResponse;
 import com.zalude.spac.fusion.models.response.UserCompletedWorkoutResponse;
 import com.zalude.spac.fusion.models.response.error.ResourceNotFoundResponse;
-import com.zalude.spac.fusion.services.ExerciseService;
-import com.zalude.spac.fusion.services.UserService;
 import com.zalude.spac.fusion.services.WorkoutService;
+import com.zalude.spac.fusion.services.UserService;
+import com.zalude.spac.fusion.services.WorkoutByDateService;
 import lombok.NonNull;
 import lombok.val;
 import org.javatuples.Pair;
@@ -36,16 +36,12 @@ public class UserController {
   private UserService userService;
 
   @NonNull
-  private ExerciseService exerciseService;
-
-  @NonNull
-  private WorkoutService workoutService;
+  private WorkoutByDateService workoutByDateService;
 
   @Inject
-  public UserController(UserService userService, ExerciseService exerciseService, WorkoutService workoutService) {
+  public UserController(UserService userService, WorkoutByDateService workoutByDateService) {
     this.userService = userService;
-    this.exerciseService = exerciseService;
-    this.workoutService = workoutService;
+    this.workoutByDateService = workoutByDateService;
   }
 
   @RequestMapping(method = RequestMethod.GET)
@@ -116,21 +112,24 @@ public class UserController {
   public ResponseEntity getCompletedWorkouts(@PathVariable UUID userId,
                                              @RequestParam("page") Integer page,
                                              @RequestParam("pageSize") Integer pageSize) {
-    val exerciseOptionLookups = userService.getCompletedWorkoutsForUser(userId, page, pageSize);
-    if (exerciseOptionLookups.isPresent()) {
-      return new ResponseEntity(asResponse(exerciseOptionLookups.get()), HttpStatus.OK);
+    val userCompletedWorkoutLookups = userService.getCompletedWorkoutsForUser(userId, page, pageSize);
+    if (userCompletedWorkoutLookups.isPresent()) {
+      val userCompletedWorkoutResponses = userCompletedWorkoutLookups.get().stream()
+          .map(this::asResponse)
+          .collect(Collectors.toList());
+      return new ResponseEntity(userCompletedWorkoutResponses, HttpStatus.OK);
     } else {
       return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
   }
 
   // GET COMPLETED WORKOUTS FOR USER
-  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/workouts/{workoutId}")
+  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/workouts/{workoutWithDateId}")
   public ResponseEntity getCompletedWorkout(@PathVariable UUID userId,
                                             @PathVariable UUID workoutId) {
-    val exerciseOptionLookups = userService.getCompletedWorkoutForUser(userId, workoutId);
-    final Optional<UserCompletedWorkoutResponse> userCompletedWorkoutResponse = exerciseOptionLookups
-        .flatMap(userExerciseOptionLookups -> asResponse(userExerciseOptionLookups).stream().findFirst());
+    val userCompletedWorkoutLookup = userService.getCompletedWorkoutForUser(userId, workoutId);
+    final Optional<UserCompletedWorkoutResponse> userCompletedWorkoutResponse =
+        userCompletedWorkoutLookup.map(this::asResponse);
 
     if (userCompletedWorkoutResponse.isPresent()) {
       return new ResponseEntity(userCompletedWorkoutResponse.get(), HttpStatus.OK);
@@ -140,22 +139,15 @@ public class UserController {
   }
 
   // CREATE COMPLETED USER WORKOUT
-  @RequestMapping(method = RequestMethod.POST, value = "/{userId}/workouts/{workoutId}")
-  public ResponseEntity createOrUpdateCompletedWorkout(@PathVariable UUID userId,
-                                                       @PathVariable UUID workoutId,
-                                                       @RequestBody @Valid UserCompletedWorkoutRequest completedWorkoutRequest) {
+  @RequestMapping(method = RequestMethod.POST, value = "/{userId}/workouts/{workoutWithDateId}")
+  public ResponseEntity<UserCompletedWorkoutResponse> createOrUpdateCompletedWorkout(@PathVariable UUID userId,
+                                                                                     @PathVariable UUID workoutWithDateId,
+                                                                                     @RequestBody @Valid UserCompletedWorkoutRequest completedWorkoutRequest) {
     try {
-      val userExerciseOptionLookup = toDomain(completedWorkoutRequest, workoutId, userId);
-      val savedLookups = userService.saveUserExerciseOptionLookup(userExerciseOptionLookup);
-      val responseForWorkoutId = asResponse(savedLookups).stream()
-          .filter(userCompletedWorkoutResponse -> userCompletedWorkoutResponse.getWorkoutId().equals(workoutId))
-          .findFirst();
+      val userCompletedWorkoutLookup = toDomain(completedWorkoutRequest, workoutWithDateId, userId);
+      val savedLookup = asResponse(userService.saveUserExerciseOptionLookup(userCompletedWorkoutLookup));
 
-      if (responseForWorkoutId.isPresent()) {
-        return new ResponseEntity(responseForWorkoutId.get(), HttpStatus.CREATED);
-      } else {
-        return new ResponseEntity(new ResourceNotFoundResponse(workoutId), HttpStatus.NOT_FOUND);
-      }
+      return new ResponseEntity(savedLookup, HttpStatus.CREATED);
     } catch (ResourceValidationException | IllegalArgumentException e) {
       return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
     } catch (ResourceNotFoundException e) {
@@ -170,47 +162,15 @@ public class UserController {
         programLevel);
   }
 
-  private List<UserCompletedWorkoutResponse> asResponse(Iterable<UserExerciseOptionLookup> userExerciseOptionLookups) {
-    List<UserExerciseOptionLookup> convertedList = (List<UserExerciseOptionLookup>) userExerciseOptionLookups;
-
-    val lookupsByWorkout = convertedList.stream()
-        .collect(Collectors.groupingBy(UserExerciseOptionLookup::getWorkout));
-
-    return lookupsByWorkout.entrySet().stream()
-        .map(asUserCompletedWorkoutResponse())
-        .collect(Collectors.toList());
+  private UserCompletedWorkoutResponse asResponse(UserCompletedWorkoutLookup userCompletedWorkoutLookup) {
+    return asUserCompletedWorkoutResponse(userCompletedWorkoutLookup);
   }
 
-  private Function<Map.Entry<Workout, List<UserExerciseOptionLookup>>, UserCompletedWorkoutResponse> asUserCompletedWorkoutResponse() {
-    return workoutListEntry -> {
-      final Workout workout = workoutListEntry.getKey();
-      final List<UserCompletedWorkoutResponse.CompletedExerciseOptionResponse> optionResponseList = workoutListEntry.getValue().stream()
-          .map(asUserCompletedExerciseResponse())
-          .collect(Collectors.toList());
-      final Exercise exercise = workout.getExercise();
-      final UserCompletedWorkoutResponse.CompletedExerciseResponse exerciseResponse =
-          new UserCompletedWorkoutResponse.CompletedExerciseResponse(exercise.getId(), exercise.getName(),
-              exercise.getInstructions(), optionResponseList);
-
-      return new UserCompletedWorkoutResponse(workout.getId(), workout.getDuration(),
-          workout.getWorkoutDate(), exerciseResponse, workout.getPreviewText());
-    };
+  private UserCompletedWorkoutResponse asUserCompletedWorkoutResponse(UserCompletedWorkoutLookup lookup) {
+    return new UserCompletedWorkoutResponse(lookup.getId(), lookup.getWorkoutWithDate(), lookup.getResult());
   }
 
-  private Function<UserExerciseOptionLookup, UserCompletedWorkoutResponse.CompletedExerciseOptionResponse> asUserCompletedExerciseResponse() {
-    return lookup -> {
-      ExerciseOption exerciseOption = lookup.getExerciseOption();
-      return new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(lookup.getId(),
-          lookup.getExerciseOption().getId(), exerciseOption.getName(), exerciseOption.getType(),
-          lookup.getResult(), exerciseOption.getDescription(), exerciseOption.getTargetAmount(), exerciseOption.getDuration());
-    };
-  }
-
-  private List<UserExerciseOptionLookup> toDomain(UserCompletedWorkoutRequest completedWorkoutRequest, UUID workoutId, UUID userId) throws ResourceValidationException {
-    if (completedWorkoutRequest.getResults().size() == 0) {
-      throw new ResourceValidationException("Can not save an empty list of exercise options for a given workout");
-    }
-
+  private UserCompletedWorkoutLookup toDomain(UserCompletedWorkoutRequest completedWorkoutRequest, UUID workoutId, UUID userId) throws ResourceValidationException {
     // check if user exists
     // TODO: these database-type of interactions should probably be validated in the service layer
     val user = userService.find(userId).orElseThrow(() -> {
@@ -218,47 +178,18 @@ public class UserController {
       return new ResourceValidationException(errors, null, null);
     });
 
-    val workout = workoutService.findWorkout(workoutId)
+    val workout = workoutByDateService.findWorkout(workoutId)
         .orElseThrow(() ->
-            new ResourceValidationException(Collections.singletonMap(workoutId,
-                Collections.singletonList("Could not find Workout")), null, null));
+            new ResourceValidationException(Collections.singletonMap(workoutId, Collections.singletonList("Could not find Workout")), null, null));
 
-    // map results and attempt to lookup the exercise option from the request objects
-    List<Pair<UserCompletedWorkoutRequest.CompletedExerciseResultRequest, Optional<ExerciseOption>>> missing =
-        completedWorkoutRequest.getResults().stream()
-            .map(getCompletedExerciseResultRequestPairFunction())
-            .filter(objects -> !objects.getValue1().isPresent())
-            .collect(Collectors.toList());
-
-    List<Pair<UserCompletedWorkoutRequest.CompletedExerciseResultRequest, Optional<ExerciseOption>>> present =
-        completedWorkoutRequest.getResults().stream()
-            .map(getCompletedExerciseResultRequestPairFunction())
-            .filter(objects -> objects.getValue1().isPresent())
-            .collect(Collectors.toList());
-
-    // if any of the ExerciseOptions couldn't be found, throw an error.
-    if (missing.size() > 0) {
-      Map<UUID, List<String>> errors = Collections.emptyMap();
-      for (Pair<UserCompletedWorkoutRequest.CompletedExerciseResultRequest, ?> requests : missing) {
-        errors.put(requests.getValue0().getExerciseOptionId(), Arrays.asList("Could not find Exercise Option"));
-      }
-      throw new ResourceValidationException(errors, null, null);
+    UUID lookupIdToSave;
+    UUID id = completedWorkoutRequest.getWorkoutId();
+    if (id != null) {
+      lookupIdToSave = id;
+    } else {
+      lookupIdToSave = UUID.randomUUID();
     }
 
-    // map the results into a list of user exercise option lookups
-    return present.stream()
-        .map(pair -> {
-          UserCompletedWorkoutRequest.CompletedExerciseResultRequest resultRequest = pair.getValue0();
-          UUID id = resultRequest.getLookupId();
-          if (id == null) {
-            id = UUID.randomUUID();
-          }
-
-          return new UserExerciseOptionLookup(id, user, pair.getValue1().get(), workout, pair.getValue0().getResult());
-        }).collect(Collectors.toList());
-  }
-
-  private Function<UserCompletedWorkoutRequest.CompletedExerciseResultRequest, Pair<UserCompletedWorkoutRequest.CompletedExerciseResultRequest, Optional<ExerciseOption>>> getCompletedExerciseResultRequestPairFunction() {
-    return resultRequest -> Pair.with(resultRequest, exerciseService.findExerciseOption(resultRequest.getExerciseOptionId()));
+    return new UserCompletedWorkoutLookup(lookupIdToSave, user, workout, completedWorkoutRequest.getResult());
   }
 }

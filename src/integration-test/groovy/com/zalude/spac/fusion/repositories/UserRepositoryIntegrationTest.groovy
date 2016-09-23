@@ -12,20 +12,20 @@ public class UserRepositoryIntegrationTest extends RepositoryTestBase implements
     private UserRepository userRepository
 
     @Inject
-    private ExerciseOptionRepository exerciseOptionRepository
+    private ExerciseRepository exerciseOptionRepository
 
     @Inject
-    private ExerciseRepository exerciseRepository
+    private WorkoutWithDateRepository exerciseRepository
 
     @Inject
-    private UserExerciseOptionLookupRepository userExerciseOptionLookupRepository
+    private UserCompletedWorkoutLookupRepository userExerciseOptionLookupRepository
 
     void setup() {
         def result = exerciseRepository.save(testExercise)
 
         // set the options that are in our user's list to the newly saved options
-        testFusionUser.userExerciseOptionLookups.each { option ->
-            option.exerciseOption = result.exerciseOptions.find { resultOption -> resultOption.name == option.exerciseOption.name }
+        testFusionUser.userCompletedWorkoutLookups.each { option ->
+            option.exerciseOption = result.exercises.find { resultOption -> resultOption.name == option.exerciseOption.name }
         }
         userRepository.save(testFusionUser)
     }
@@ -56,7 +56,7 @@ public class UserRepositoryIntegrationTest extends RepositoryTestBase implements
         then:
         users.size() == 1
         user == testFusionUser
-        user.userExerciseOptionLookups == testFusionUser.userExerciseOptionLookups
+        user.userCompletedWorkoutLookups == testFusionUser.userCompletedWorkoutLookups
     }
 
     @Transactional

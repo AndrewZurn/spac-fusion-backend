@@ -1,12 +1,13 @@
 package com.zalude.spac.fusion.models.request;
 
 import lombok.*;
+import org.hibernate.validator.constraints.NotBlank;
 
-import java.time.LocalDate;
-import java.util.UUID;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
- * TODO: DESCRIPTION OF CLASS HERE
+ * The request representation to create or update an exercise within the system.
  *
  * @author Andrew Zurn (azurn)
  */
@@ -16,14 +17,15 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CreateOrUpdateWorkoutRequest {
 
-  @NonNull
-  private UUID exerciseId;
+  @NotNull
+  @NotBlank(message = "Please provide a name.")
+  private String name;
 
-  @NonNull
-  private String duration;
+  @NotNull
+  private String instructions;
 
-  private String previewText;
+  @NotBlank(message = "Please provide the type for the exercise (AMRAP, TASK, ETC).")
+  private String exerciseType;
 
-  @NonNull
-  private LocalDate workoutDate;
+  private List<CreateOrUpdateExerciseRequest> exercises;
 }
