@@ -10,6 +10,30 @@ databaseChangeLog:
         author: "azurn"
         changes:
           - createTable:
+              tableName: "workout"
+              schemaName: "public"
+              columns:
+                - column:
+                    name: "id"
+                    type: "uuid"
+                    defaultValueComputed: "gen_random_uuid()"
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: "name"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "workout_type"
+                    type: "text"
+                    constraints:
+                      nullable: false
+                - column:
+                    name: "instructions"
+                    type: "text"
+          - createTable:
               tableName: "exercise"
               schemaName: "public"
               columns:
@@ -26,43 +50,13 @@ databaseChangeLog:
                     constraints:
                       nullable: false
                 - column:
-                    name: "instructions"
-                    type: "text"
-          - createTable:
-              tableName: "exercise_option"
-              schemaName: "public"
-              columns:
-                - column:
-                    name: "id"
-                    type: "uuid"
-                    defaultValueComputed: "gen_random_uuid()"
-                    constraints:
-                      primaryKey: true
-                      nullable: false
-                - column:
-                    name: "name"
-                    type: "text"
-                    constraints:
-                      nullable: false
-                - column:
-                    name: "description"
-                    type: "text"
-                - column:
-                    name: "type"
-                    type: "text"
-                    constraints:
-                      nullable: false
-                - column:
-                    name: "target_amount"
+                    name: "amount"
                     type: "text"
                 - column:
                     name: "duration"
                     type: "text"
                 - column:
-                    name: "alternative_exercise_option_id"
-                    type: "uuid"
-                - column:
-                    name: "exercise_id"
+                    name: "workout_id"
                     type: "uuid"
           - createTable:
               tableName: "fusion_user"
@@ -108,7 +102,7 @@ databaseChangeLog:
                     constraints:
                       nullable: false
           - createTable:
-              tableName: "user_exercise_option_lookup"
+              tableName: "user_completed_workout_lookup"
               schemaName: "public"
               columns:
                 - column:
@@ -124,12 +118,7 @@ databaseChangeLog:
                     constraints:
                       nullable: false
                 - column:
-                    name: "exercise_option_id"
-                    type: "uuid"
-                    constraints:
-                      nullable: false
-                - column:
-                    name: "workout_id"
+                    name: "workout_with_date_id"
                     type: "uuid"
                     constraints:
                       nullable: false
@@ -139,7 +128,7 @@ databaseChangeLog:
                     constraints:
                       nullable: false
           - createTable:
-              tableName: "workout"
+              tableName: "workout_with_date"
               schemaName: "public"
               columns:
                 - column:
@@ -150,20 +139,12 @@ databaseChangeLog:
                       primaryKey: true
                       nullable: false
                 - column:
-                    name: "duration"
-                    type: "text"
-                    constraints:
-                      nullable: false
-                - column:
-                    name: "preview_text"
-                    type: "text"
-                - column:
                     name: "workout_date"
                     type: "date"
                     constraints:
                       nullable: false
                 - column:
-                    name: "exercise_id"
+                    name: "workout_id"
                     type: "uuid"
                     constraints:
                       nullable: false

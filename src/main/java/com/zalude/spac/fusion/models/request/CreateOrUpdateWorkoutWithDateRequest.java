@@ -2,8 +2,7 @@ package com.zalude.spac.fusion.models.request;
 
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -15,12 +14,11 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCompletedWorkoutRequest {
+public class CreateOrUpdateWorkoutWithDateRequest {
 
-  @NotNull
+  @NonNull
   private UUID workoutId;
 
-  @NotNull
-  private String result;
-  
+  @NonNull
+  private LocalDate workoutDate;
 }

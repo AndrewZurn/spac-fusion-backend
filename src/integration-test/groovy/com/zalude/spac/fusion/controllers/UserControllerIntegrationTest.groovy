@@ -7,9 +7,8 @@ import com.zalude.spac.fusion.models.request.CreateUserRequest
 import com.zalude.spac.fusion.models.request.UpdateUserRequest
 import com.zalude.spac.fusion.models.request.UserCompletedWorkoutRequest
 import com.zalude.spac.fusion.models.response.UserCompletedWorkoutResponse
-import com.zalude.spac.fusion.repositories.ExerciseRepository
 import com.zalude.spac.fusion.repositories.UserRepository
-import com.zalude.spac.fusion.repositories.WorkoutRepository
+import com.zalude.spac.fusion.repositories.WorkoutWithDateRepository
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -22,10 +21,10 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
     private UserRepository userRepository
 
     @Inject
-    private WorkoutRepository workoutRepository
+    private WorkoutWithDateRepository workoutRepository
 
     @Inject
-    private ExerciseRepository exerciseRepository
+    private WorkoutWithDateRepository exerciseRepository
 
     String getBasePath() { "/users" }
 
@@ -33,8 +32,8 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         def result = exerciseRepository.save(testExercise)
 
         // set the options that are in our user's list to the newly saved options
-        testFusionUser.userExerciseOptionLookups.each { option ->
-            option.exerciseOption = result.exerciseOptions.find { resultOption -> resultOption.name == option.exerciseOption.name }
+        testFusionUser.userCompletedWorkoutLookups.each { option ->
+            option.exerciseOption = result.exercises.find { resultOption -> resultOption.name == option.exerciseOption.name }
         }
 
         // remove seeded users
@@ -133,7 +132,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
 
         then:
         result.statusCode == HttpStatus.OK
-        completedWorkouts.size() == testFusionUser.userExerciseOptionLookups.size()
+        completedWorkouts.size() == testFusionUser.userCompletedWorkoutLookups.size()
     }
 
     def "add a completed workout/exercise option lookups for a user"() {
@@ -166,7 +165,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
             completedResult.result == expectedResponseResult.result
             completedResult.description == expectedResponseResult.description
             completedResult.name == expectedResponseResult.name
-            completedResult.targetAmount == expectedResponseResult.targetAmount
+            completedResult.getAmount == expectedResponseResult.targetAmount
             completedResult.type == expectedResponseResult.type
         }
     }
@@ -201,19 +200,19 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
     }
 
     private UserCompletedWorkoutResponse.CompletedExerciseResponse exerciseResponse(List<UserCompletedWorkoutResponse.CompletedExerciseOptionResponse> lookupResponseList) {
-        new UserCompletedWorkoutResponse.CompletedExerciseResponse(testWorkout.exercise.id,
-                testWorkout.exercise.name, testWorkout.exercise.instructions, lookupResponseList)
+        new UserCompletedWorkoutResponse.CompletedExerciseResponse(testWorkout.workout.id,
+                testWorkout.workout.name, testWorkout.workout.instructions, lookupResponseList)
     }
 
     private List<UserCompletedWorkoutResponse.CompletedExerciseOptionResponse> lookupResponses() {
-        testWorkout.exercise.exerciseOptions.collect { option ->
+        testWorkout.workout.exercises.collect { option ->
             new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(UUID.randomUUID(), option.id, option.name,
-                    option.type, "25", option.description, option.targetAmount, option.duration)
+                    option.type, "25", option.description, option.amount, option.duration)
         }
     }
 
     private UserCompletedWorkoutRequest createCompletedWorkoutRequest() {
-        new UserCompletedWorkoutRequest(testWorkout.exercise.exerciseOptions.collect { option ->
+        new UserCompletedWorkoutRequest(testWorkout.workout.exercises.collect { option ->
             new UserCompletedWorkoutRequest.CompletedExerciseResultRequest(null, option.id, "25")
         })
     }
