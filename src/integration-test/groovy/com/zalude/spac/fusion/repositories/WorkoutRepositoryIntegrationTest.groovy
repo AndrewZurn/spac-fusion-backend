@@ -7,50 +7,50 @@ import org.springframework.transaction.annotation.Transactional
 
 import javax.inject.Inject;
 
-public class WorkoutWithDateRepositoryIntegrationTest extends RepositoryTestBase implements IntegrationTestData {
+public class WorkoutRepositoryIntegrationTest extends RepositoryTestBase implements IntegrationTestData {
 
     @Inject
-    WorkoutWithDateRepository exerciseRepository
+    WorkoutRepository workoutRepository
 
     def setup() {
-        exerciseRepository.save(testExercise)
+        workoutRepository.save(this.testWorkout)
     }
 
     def cleanup() {
-        exerciseRepository.deleteAllInBatch()
+        workoutRepository.deleteAllInBatch()
     }
 
-    def "get an empty list of exercises"() {
+    def "get an empty list of workouts"() {
         given:
-        exerciseRepository.deleteAll()
+        workoutRepository.deleteAll()
 
         when:
-        Iterable<Workout> exercises = exerciseRepository.findAll()
+        Iterable<Workout> exercises = workoutRepository.findAll()
 
         then:
         exercises.size() == 0
     }
 
     @Transactional
-    def "get a list of exercises and their exercise options"() {
+    def "get a list of workouts and their exercises"() {
         given:
         when:
-        Iterable<Workout> exercises = exerciseRepository.findAll()
+        Iterable<Workout> exercises = workoutRepository.findAll()
 
         then:
         exercises.size() == 1
-        exercises.getAt(0) == testExercise
+        exercises.getAt(0) == this.testWorkout
     }
 
-    def "get a list of exercises that match by name and not id"() {
+    def "get a list of workouts that match by name and not id"() {
         given:
         when:
-        Iterable<Workout> emptyExercise = exerciseRepository.findByNameAndIdNot(testExercise.name, testExercise.id)
-        Iterable<Workout> matchingExercise = exerciseRepository.findByNameAndIdNot(testExercise.name, UUID.fromString("02fd700b-5f78-4e4a-aed5-c4a38284082e"))
+        Iterable<Workout> emptyExercise = workoutRepository.findByNameAndIdNot(this.testWorkout.name, this.testWorkout.id)
+        Iterable<Workout> matchingExercise = workoutRepository.findByNameAndIdNot(this.testWorkout.name, UUID.fromString("02fd700b-5f78-4e4a-aed5-c4a38284082e"))
 
         then:
         emptyExercise.size() == 0
         matchingExercise.size() == 1
-        matchingExercise.get(0) == testExercise
+        matchingExercise.get(0) == this.testWorkout
     }
 }

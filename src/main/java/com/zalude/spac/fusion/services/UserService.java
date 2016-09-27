@@ -3,8 +3,8 @@ package com.zalude.spac.fusion.services;
 import com.zalude.spac.fusion.exceptions.ResourceNotFoundException;
 import com.zalude.spac.fusion.exceptions.ResourceValidationException;
 import com.zalude.spac.fusion.models.domain.FusionUser;
-import com.zalude.spac.fusion.models.domain.UserCompletedWorkoutLookup;
-import com.zalude.spac.fusion.repositories.UserCompletedWorkoutLookupRepository;
+import com.zalude.spac.fusion.models.domain.UserCompletedScheduledWorkout;
+import com.zalude.spac.fusion.repositories.UserCompletedScheduledWorkoutRepository;
 import com.zalude.spac.fusion.repositories.UserRepository;
 import lombok.NonNull;
 import lombok.val;
@@ -27,13 +27,13 @@ import java.util.UUID;
 public class UserService {
 
   @NonNull
-  private UserCompletedWorkoutLookupRepository userCompletedWorkoutLookupRepository;
+  private UserCompletedScheduledWorkoutRepository userCompletedScheduledWorkoutRepository;
   @NonNull
   private UserRepository userRepository;
 
   @Inject
-  public UserService(UserCompletedWorkoutLookupRepository userCompletedWorkoutLookupRepository, UserRepository userRepository) {
-    this.userCompletedWorkoutLookupRepository = userCompletedWorkoutLookupRepository;
+  public UserService(UserCompletedScheduledWorkoutRepository userCompletedScheduledWorkoutRepository, UserRepository userRepository) {
+    this.userCompletedScheduledWorkoutRepository = userCompletedScheduledWorkoutRepository;
     this.userRepository = userRepository;
   }
 
@@ -59,30 +59,30 @@ public class UserService {
     return userRepository.save(existingUser);
   }
 
-  public Optional<List<UserCompletedWorkoutLookup>> getCompletedWorkoutsForUser(UUID userId, Integer page, Integer pageSize) {
+  public Optional<List<UserCompletedScheduledWorkout>> getCompletedWorkoutsForUser(UUID userId, Integer page, Integer pageSize) {
     val user = find(userId);
     if (!user.isPresent()) {
       return Optional.empty();
     } else {
-      return Optional.ofNullable(userCompletedWorkoutLookupRepository.findAllByUserId(userId, new PageRequest(page, pageSize)));
+      return Optional.ofNullable(userCompletedScheduledWorkoutRepository.findAllByUserId(userId, new PageRequest(page, pageSize)));
     }
   }
 
-  public Optional<UserCompletedWorkoutLookup> getCompletedWorkoutForUser(UUID userId, UUID workoutWithDateId) {
+  public Optional<UserCompletedScheduledWorkout> getCompletedWorkoutForUser(UUID userId, UUID scheduledWorkoutId) {
     val user = find(userId);
     if (!user.isPresent()) {
       return Optional.empty();
     } else {
-      return Optional.ofNullable(userCompletedWorkoutLookupRepository.findByUserIdAndWorkoutWithDateId(userId, workoutWithDateId));
+      return Optional.ofNullable(userCompletedScheduledWorkoutRepository.findByUserIdAndScheduledWorkoutId(userId, scheduledWorkoutId));
     }
   }
 
-  public UserCompletedWorkoutLookup saveUserExerciseOptionLookup(UserCompletedWorkoutLookup userCompletedWorkoutLookup)
+  public UserCompletedScheduledWorkout saveUserCompletedScheduledWorkoutLookup(UserCompletedScheduledWorkout userCompletedScheduledWorkout)
       throws ResourceValidationException, ResourceNotFoundException {
     // attempt to delete the old lookups first
-    userCompletedWorkoutLookupRepository.deleteUserPreviousLookups(userCompletedWorkoutLookup.getWorkoutWithDate().getId(),
-        userCompletedWorkoutLookup.getUser().getId());
-    return userCompletedWorkoutLookupRepository.save(userCompletedWorkoutLookup);
+    userCompletedScheduledWorkoutRepository.deleteUserPreviousLookups(userCompletedScheduledWorkout.getScheduledWorkout().getId(),
+        userCompletedScheduledWorkout.getUser().getId());
+    return userCompletedScheduledWorkoutRepository.save(userCompletedScheduledWorkout);
   }
 
   public Optional<Integer> getUserRemainingWorkoutUnlocks(UUID userId) {
@@ -91,7 +91,7 @@ public class UserService {
       LocalDate endOfWeek = LocalDate.now().with(DayOfWeek.SUNDAY);
 
       // get the user's completed workouts for the week and their program level
-      Integer userCompleteWorkouts = userCompletedWorkoutLookupRepository.completedWorkoutsForWeek(userId, startOfWeek, endOfWeek);
+      Integer userCompleteWorkouts = userCompletedScheduledWorkoutRepository.completedWorkoutsForWeek(userId, startOfWeek, endOfWeek);
       FusionUser.ProgramLevel userProgramLevel = FusionUser.ProgramLevel.valueOf(fusionUser.getProgramLevel().toUpperCase());
 
       return userProgramLevel.getWorkoutLimit() - userCompleteWorkouts;

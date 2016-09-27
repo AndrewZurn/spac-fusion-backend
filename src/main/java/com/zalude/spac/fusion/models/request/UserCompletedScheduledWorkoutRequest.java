@@ -15,10 +15,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCompletedWorkoutRequest {
-
-  @NotNull
-  private UUID workoutId;
+public class UserCompletedScheduledWorkoutRequest {
 
   @NotNull
   private String result;

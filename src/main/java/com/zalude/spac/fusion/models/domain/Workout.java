@@ -34,12 +34,12 @@ public class Workout {
 
   private String instructions;
 
-  private String duration; // if it is a time-based workout (such as AMRAP)
+  private String duration; // if it is a time-based scheduledWorkout (such as AMRAP)
 
   @NonNull
   private String workoutType;
 
-  @OneToMany(mappedBy = "exercise",
+  @OneToMany(mappedBy = "workout",
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER,
       orphanRemoval = true)

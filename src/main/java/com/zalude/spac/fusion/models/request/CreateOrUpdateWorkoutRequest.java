@@ -24,6 +24,8 @@ public class CreateOrUpdateWorkoutRequest {
   @NotNull
   private String instructions;
 
+  private String duration;
+
   @NotBlank(message = "Please provide the type for the exercise (AMRAP, TASK, ETC).")
   private String exerciseType;
 

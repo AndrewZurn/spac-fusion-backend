@@ -2,7 +2,7 @@ package com.zalude.spac.fusion.repositories
 
 import com.zalude.spac.fusion.IntegrationTestData
 import com.zalude.spac.fusion.RepositoryTestBase
-import com.zalude.spac.fusion.models.domain.WorkoutWithDate
+import com.zalude.spac.fusion.models.domain.ScheduledWorkout
 import fj.data.Collectors
 import org.springframework.transaction.annotation.Transactional
 
@@ -10,17 +10,17 @@ import javax.inject.Inject
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-public class WorkoutWithDateRepositoryIntegrationTest extends RepositoryTestBase implements IntegrationTestData {
+public class ScheduleWorkoutRepositoryIntegrationTest extends RepositoryTestBase implements IntegrationTestData {
 
     @Inject
-    private WorkoutWithDateRepository workoutRepository
+    private ScheduledWorkoutRepository workoutRepository
 
     @Inject
-    private WorkoutWithDateRepository exerciseRepository
+    private ScheduledWorkoutRepository exerciseRepository
 
     void setup() {
-        exerciseRepository.save(testExercise)
-        workoutRepository.save(testWorkout)
+        exerciseRepository.save(this.testWorkout)
+        workoutRepository.save(this.testScheduledWorkout)
     }
 
     void cleanup() {
@@ -46,7 +46,7 @@ public class WorkoutWithDateRepositoryIntegrationTest extends RepositoryTestBase
 
         then:
         workouts.size() == 1
-        workouts.getAt(0) == testWorkout
+        workouts.getAt(0) == this.testScheduledWorkout
     }
 
     def "find today's workout"() {
@@ -71,7 +71,7 @@ public class WorkoutWithDateRepositoryIntegrationTest extends RepositoryTestBase
         LocalDate sunday = LocalDate.now().with(DayOfWeek.SUNDAY);
         def daysOfWeek = [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
         def workoutsToSave = daysOfWeek.stream().map { day ->
-            WorkoutWithDate clonedWorkout = testWorkout.clone()
+            ScheduledWorkout clonedWorkout = this.testScheduledWorkout.clone()
             clonedWorkout.setWorkoutDate(day)
             clonedWorkout.setId(UUID.randomUUID())
             clonedWorkout

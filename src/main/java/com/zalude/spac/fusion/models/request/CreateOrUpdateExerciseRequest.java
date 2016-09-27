@@ -23,9 +23,7 @@ public class CreateOrUpdateExerciseRequest {
     @NotBlank(message = "Please provide a name for the exercise option.")
     private String name;
 
-    private String description;
-
-    private String targetAmount;
+    private String amount;
 
     private String duration;
 }

@@ -1,8 +1,9 @@
 package com.zalude.spac.fusion.services;
 
 import com.zalude.spac.fusion.exceptions.ResourceValidationException;
-import com.zalude.spac.fusion.models.domain.WorkoutWithDate;
-import com.zalude.spac.fusion.repositories.WorkoutWithDateRepository;
+import com.zalude.spac.fusion.models.domain.ScheduledWorkout;
+import com.zalude.spac.fusion.models.domain.ScheduledWorkout;
+import com.zalude.spac.fusion.repositories.ScheduledWorkoutRepository;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
@@ -20,54 +21,54 @@ import java.util.UUID;
  * @author Andrew Zurn (azurn)
  */
 @Service
-public class WorkoutByDateService {
+public class ScheduledWorkoutService {
 
   @NotNull
-  private WorkoutWithDateRepository workoutRepository;
+  private ScheduledWorkoutRepository workoutRepository;
 
   @Inject
-  public WorkoutByDateService(WorkoutWithDateRepository workoutRepository) {
+  public ScheduledWorkoutService(ScheduledWorkoutRepository workoutRepository) {
     this.workoutRepository = workoutRepository;
   }
 
-  public Iterable<WorkoutWithDate> findAllWorkouts() {
+  public Iterable<ScheduledWorkout> findAllWorkouts() {
     return this.workoutRepository.findAll();
   }
 
-  public Optional<WorkoutWithDate> findWorkout(UUID id) {
+  public Optional<ScheduledWorkout> findWorkout(UUID id) {
     return Optional.ofNullable(this.workoutRepository.findOne(id));
   }
 
-  public Optional<WorkoutWithDate> findTodaysWorkout() {
+  public Optional<ScheduledWorkout> findTodaysWorkout() {
     return Optional.ofNullable(this.workoutRepository.findTodaysWorkout());
   }
 
-  public Optional<WorkoutWithDate> findWorkoutForDate(LocalDate date) {
+  public Optional<ScheduledWorkout> findWorkoutForDate(LocalDate date) {
     return Optional.ofNullable(this.workoutRepository.findOneByWorkoutDate(date));
   }
 
-  public Iterable<WorkoutWithDate> findRemainingWorkoutsForWeek() {
+  public Iterable<ScheduledWorkout> findRemainingWorkoutsForWeek() {
     LocalDate todaysDay = LocalDate.now();
     LocalDate endOfWeek = LocalDate.now().with(DayOfWeek.SUNDAY);
     return workoutRepository.findAllWorkouts(todaysDay, endOfWeek);
   }
 
-  public WorkoutWithDate create(WorkoutWithDate workoutWithDate) throws ResourceValidationException {
-    if (findWorkoutForDate(workoutWithDate.getWorkoutDate()).isPresent()) {
+  public ScheduledWorkout create(ScheduledWorkout scheduledWorkout) throws ResourceValidationException {
+    if (findWorkoutForDate(scheduledWorkout.getWorkoutDate()).isPresent()) {
       throw new ResourceValidationException(null,
-          Collections.singletonMap("workoutDate", Collections.singletonList("Workout already exists for date: " + workoutWithDate.getWorkoutDate().toString())),
+          Collections.singletonMap("workoutDate", Collections.singletonList("Workout already exists for date: " + scheduledWorkout.getWorkoutDate().toString())),
           null);
     }
 
-    return this.workoutRepository.save(workoutWithDate);
+    return this.workoutRepository.save(scheduledWorkout);
   }
 
-  public WorkoutWithDate update(WorkoutWithDate workoutWithDate, UUID id) throws ResourceValidationException {
+  public ScheduledWorkout update(ScheduledWorkout scheduledWorkout, UUID id) throws ResourceValidationException {
     val maybeWorkout = this.findWorkout(id);
     if (maybeWorkout.isPresent()) {
       val foundWorkout = maybeWorkout.get();
-      foundWorkout.setWorkoutDate(workoutWithDate.getWorkoutDate());
-      foundWorkout.setWorkout(workoutWithDate.getWorkout());
+      foundWorkout.setWorkoutDate(scheduledWorkout.getWorkoutDate());
+      foundWorkout.setWorkout(scheduledWorkout.getWorkout());
       return this.workoutRepository.save(foundWorkout);
     } else {
       val errors = Collections.singletonMap(id, Collections.singletonList("Could not find Workout."));

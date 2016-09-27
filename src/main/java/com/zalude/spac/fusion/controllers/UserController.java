@@ -7,12 +7,10 @@ import com.zalude.spac.fusion.models.request.*;
 import com.zalude.spac.fusion.models.response.UserRemainingWorkoutUnlocksResponse;
 import com.zalude.spac.fusion.models.response.UserCompletedWorkoutResponse;
 import com.zalude.spac.fusion.models.response.error.ResourceNotFoundResponse;
-import com.zalude.spac.fusion.services.WorkoutService;
 import com.zalude.spac.fusion.services.UserService;
-import com.zalude.spac.fusion.services.WorkoutByDateService;
+import com.zalude.spac.fusion.services.ScheduledWorkoutService;
 import lombok.NonNull;
 import lombok.val;
-import org.javatuples.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -36,12 +33,12 @@ public class UserController {
   private UserService userService;
 
   @NonNull
-  private WorkoutByDateService workoutByDateService;
+  private ScheduledWorkoutService scheduledWorkoutService;
 
   @Inject
-  public UserController(UserService userService, WorkoutByDateService workoutByDateService) {
+  public UserController(UserService userService, ScheduledWorkoutService scheduledWorkoutService) {
     this.userService = userService;
-    this.workoutByDateService = workoutByDateService;
+    this.scheduledWorkoutService = scheduledWorkoutService;
   }
 
   @RequestMapping(method = RequestMethod.GET)
@@ -59,7 +56,7 @@ public class UserController {
     return returnUserIfFound(userService.findByAuth0Id(auth0Id));
   }
 
-  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/remaining-workout-unlocks")
+  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/remaining-scheduledWorkout-unlocks")
   public ResponseEntity getUserRemainingWorkoutUnlocks(@PathVariable UUID userId) {
     return userService.getUserRemainingWorkoutUnlocks(userId)
         .map(result -> new ResponseEntity(
@@ -108,7 +105,7 @@ public class UserController {
   }
 
   // GET COMPLETED WORKOUTS FOR USER
-  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/workouts")
+  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/scheduled-workouts")
   public ResponseEntity getCompletedWorkouts(@PathVariable UUID userId,
                                              @RequestParam("page") Integer page,
                                              @RequestParam("pageSize") Integer pageSize) {
@@ -124,10 +121,10 @@ public class UserController {
   }
 
   // GET COMPLETED WORKOUTS FOR USER
-  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/workouts/{workoutWithDateId}")
+  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/scheduled-workouts/{scheduledWorkoutId}")
   public ResponseEntity getCompletedWorkout(@PathVariable UUID userId,
-                                            @PathVariable UUID workoutId) {
-    val userCompletedWorkoutLookup = userService.getCompletedWorkoutForUser(userId, workoutId);
+                                            @PathVariable UUID scheduledWorkoutId) {
+    val userCompletedWorkoutLookup = userService.getCompletedWorkoutForUser(userId, scheduledWorkoutId);
     final Optional<UserCompletedWorkoutResponse> userCompletedWorkoutResponse =
         userCompletedWorkoutLookup.map(this::asResponse);
 
@@ -139,13 +136,13 @@ public class UserController {
   }
 
   // CREATE COMPLETED USER WORKOUT
-  @RequestMapping(method = RequestMethod.POST, value = "/{userId}/workouts/{workoutWithDateId}")
+  @RequestMapping(method = RequestMethod.POST, value = "/{userId}/scheduled-workouts/{scheduledWorkoutId}")
   public ResponseEntity<UserCompletedWorkoutResponse> createOrUpdateCompletedWorkout(@PathVariable UUID userId,
-                                                                                     @PathVariable UUID workoutWithDateId,
-                                                                                     @RequestBody @Valid UserCompletedWorkoutRequest completedWorkoutRequest) {
+                                                                                     @PathVariable UUID scheduledWorkoutId,
+                                                                                     @RequestBody @Valid UserCompletedScheduledWorkoutRequest completedWorkoutRequest) {
     try {
-      val userCompletedWorkoutLookup = toDomain(completedWorkoutRequest, workoutWithDateId, userId);
-      val savedLookup = asResponse(userService.saveUserExerciseOptionLookup(userCompletedWorkoutLookup));
+      val userCompletedWorkoutLookup = toDomain(completedWorkoutRequest, scheduledWorkoutId, userId);
+      val savedLookup = asResponse(userService.saveUserCompletedScheduledWorkoutLookup(userCompletedWorkoutLookup));
 
       return new ResponseEntity(savedLookup, HttpStatus.CREATED);
     } catch (ResourceValidationException | IllegalArgumentException e) {
@@ -162,15 +159,15 @@ public class UserController {
         programLevel);
   }
 
-  private UserCompletedWorkoutResponse asResponse(UserCompletedWorkoutLookup userCompletedWorkoutLookup) {
-    return asUserCompletedWorkoutResponse(userCompletedWorkoutLookup);
+  private UserCompletedWorkoutResponse asResponse(UserCompletedScheduledWorkout userCompletedScheduledWorkout) {
+    return asUserCompletedWorkoutResponse(userCompletedScheduledWorkout);
   }
 
-  private UserCompletedWorkoutResponse asUserCompletedWorkoutResponse(UserCompletedWorkoutLookup lookup) {
-    return new UserCompletedWorkoutResponse(lookup.getId(), lookup.getWorkoutWithDate(), lookup.getResult());
+  private UserCompletedWorkoutResponse asUserCompletedWorkoutResponse(UserCompletedScheduledWorkout lookup) {
+    return new UserCompletedWorkoutResponse(lookup.getId(), lookup.getScheduledWorkout(), lookup.getResult());
   }
 
-  private UserCompletedWorkoutLookup toDomain(UserCompletedWorkoutRequest completedWorkoutRequest, UUID workoutId, UUID userId) throws ResourceValidationException {
+  private UserCompletedScheduledWorkout toDomain(UserCompletedScheduledWorkoutRequest completedWorkoutRequest, UUID scheduledWorkoutId, UUID userId) throws ResourceValidationException {
     // check if user exists
     // TODO: these database-type of interactions should probably be validated in the service layer
     val user = userService.find(userId).orElseThrow(() -> {
@@ -178,18 +175,10 @@ public class UserController {
       return new ResourceValidationException(errors, null, null);
     });
 
-    val workout = workoutByDateService.findWorkout(workoutId)
+    val workout = scheduledWorkoutService.findWorkout(scheduledWorkoutId)
         .orElseThrow(() ->
-            new ResourceValidationException(Collections.singletonMap(workoutId, Collections.singletonList("Could not find Workout")), null, null));
+            new ResourceValidationException(Collections.singletonMap(scheduledWorkoutId, Collections.singletonList("Could not find Workout")), null, null));
 
-    UUID lookupIdToSave;
-    UUID id = completedWorkoutRequest.getWorkoutId();
-    if (id != null) {
-      lookupIdToSave = id;
-    } else {
-      lookupIdToSave = UUID.randomUUID();
-    }
-
-    return new UserCompletedWorkoutLookup(lookupIdToSave, user, workout, completedWorkoutRequest.getResult());
+    return new UserCompletedScheduledWorkout(scheduledWorkoutId, user, workout, completedWorkoutRequest.getResult());
   }
 }

@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserCompletedWorkoutLookup {
+public class UserCompletedScheduledWorkout {
 
   @Id
   @Type(type = "pg-uuid")
@@ -27,19 +27,19 @@ public class UserCompletedWorkoutLookup {
   private UUID id;
 
   @NonNull
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "user_id")
   private FusionUser user;
 
   @NonNull
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "workout_with_date_id")
-  private WorkoutWithDate workoutWithDate;
+  @ManyToOne
+  @JoinColumn(name = "scheduled_workout_id")
+  private ScheduledWorkout scheduledWorkout;
 
   @NonNull
   private String result;
 
   @Tolerate
-  public UserCompletedWorkoutLookup() {
+  public UserCompletedScheduledWorkout() {
   }
 }

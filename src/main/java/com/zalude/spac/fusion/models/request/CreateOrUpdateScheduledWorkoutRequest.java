@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateOrUpdateWorkoutWithDateRequest {
+public class CreateOrUpdateScheduledWorkoutRequest {
 
   @NonNull
   private UUID workoutId;

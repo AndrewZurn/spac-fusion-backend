@@ -28,7 +28,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
  * @author Andrew Zurn (azurn)
  */
 @RestController
-@RequestMapping("workouts")
+@RequestMapping(path = "/workouts")
 public class WorkoutController {
 
   @NonNull
@@ -44,7 +44,7 @@ public class WorkoutController {
     return new ResponseEntity(workoutService.findAllWorkouts(), HttpStatus.OK);
   }
 
-  @RequestMapping(method = GET, value = "/{workoutId}")
+  @RequestMapping(method = GET, value = "/{scheduledWorkoutId}")
   public ResponseEntity<Workout> getWorkout(@PathVariable UUID workoutId) {
     val workout = workoutService.findExercise(workoutId);
     if (workout.isPresent()) {
@@ -63,7 +63,7 @@ public class WorkoutController {
     }
   }
 
-  @RequestMapping(method = PUT, value = "/{workoutId}")
+  @RequestMapping(method = PUT, value = "/{scheduledWorkoutId}")
   public ResponseEntity updateWorkout(@PathVariable UUID exerciseId,
                                       @RequestBody @Valid CreateOrUpdateWorkoutRequest exerciseRequest) {
     try {
@@ -93,20 +93,22 @@ public class WorkoutController {
     return new ResponseEntity(savedWorkout, successStatus);
   }
 
-  private Workout toDomain(CreateOrUpdateWorkoutRequest exerciseRequest, UUID exerciseId) {
-    val workout = new Workout(exerciseRequest.getName(), exerciseRequest.getInstructions(), Collections.emptyList());
+  private Workout toDomain(CreateOrUpdateWorkoutRequest workoutRequest, UUID exerciseId) {
+    val workout = new Workout(workoutRequest.getName(), workoutRequest.getExerciseType(), Collections.emptyList());
     workout.setId(exerciseId);
+    workout.setInstructions(workoutRequest.getInstructions());
+    workout.setDuration(workoutRequest.getDuration());
 
-    val exerciseList = exerciseRequest.getExercises().stream()
+    val exerciseList = workoutRequest.getExercises().stream()
         .map(optionRequest -> toDomain(optionRequest, workout))
         .collect(Collectors.toList());
     workout.setExercises(exerciseList);
     return workout;
   }
 
-  private Exercise toDomain(CreateOrUpdateExerciseRequest exerciseOptionRequest, Workout workout) {
+  private Exercise toDomain(CreateOrUpdateExerciseRequest exerciseRequest, Workout workout) {
     UUID exerciseIdToUser;
-    val exerciseOptionRequestId = exerciseOptionRequest.getId();
+    val exerciseOptionRequestId = exerciseRequest.getId();
     if (exerciseOptionRequestId != null) {
       exerciseIdToUser = exerciseOptionRequestId;
     } else {
@@ -114,8 +116,7 @@ public class WorkoutController {
     }
 
     // create and set the proper fields on the ExerciseOption
-    val exercise = new Exercise(exerciseIdToUser, exerciseOptionRequest.getName());
-    exercise.setAmount(exerciseOptionRequest.getTargetAmount());
+    val exercise = new Exercise(exerciseIdToUser, exerciseRequest.getName(), exerciseRequest.getAmount());
     exercise.setWorkout(workout);
 
     return exercise;

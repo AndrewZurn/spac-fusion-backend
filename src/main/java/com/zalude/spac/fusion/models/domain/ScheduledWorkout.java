@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 /**
- * Contains a set of exercise that will be performed in order to achieve the 'daily' workout.
+ * Contains a set of exercise that will be performed in order to achieve the 'daily' scheduledWorkout.
  *
  * @author Andrew Zurn (azurn)
  */
@@ -25,7 +25,7 @@ import java.util.UUID;
 @EqualsAndHashCode(of = "id")
 @ToString(exclude = "workout")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class WorkoutWithDate implements Cloneable {
+public class ScheduledWorkout implements Cloneable {
 
   @Id
   @Type(type = "pg-uuid")
@@ -43,6 +43,6 @@ public class WorkoutWithDate implements Cloneable {
   private Workout workout;
 
   @Tolerate
-  WorkoutWithDate() {}
+  ScheduledWorkout() {}
 
 }

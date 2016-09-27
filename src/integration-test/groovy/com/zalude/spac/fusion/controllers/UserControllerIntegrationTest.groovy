@@ -5,15 +5,17 @@ import com.zalude.spac.fusion.IntegrationTestData
 import com.zalude.spac.fusion.models.domain.FusionUser
 import com.zalude.spac.fusion.models.request.CreateUserRequest
 import com.zalude.spac.fusion.models.request.UpdateUserRequest
-import com.zalude.spac.fusion.models.request.UserCompletedWorkoutRequest
+import com.zalude.spac.fusion.models.request.UserCompletedScheduledWorkoutRequest
 import com.zalude.spac.fusion.models.response.UserCompletedWorkoutResponse
 import com.zalude.spac.fusion.repositories.UserRepository
-import com.zalude.spac.fusion.repositories.WorkoutWithDateRepository
+import com.zalude.spac.fusion.repositories.ScheduledWorkoutRepository
+import com.zalude.spac.fusion.repositories.WorkoutRepository
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.transaction.annotation.Transactional
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
 public class UserControllerIntegrationTest extends ControllerTestBase implements IntegrationTestData {
 
@@ -21,33 +23,25 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
     private UserRepository userRepository
 
     @Inject
-    private WorkoutWithDateRepository workoutRepository
+    private ScheduledWorkoutRepository scheduledWorkoutRepository
 
     @Inject
-    private WorkoutWithDateRepository exerciseRepository
+    private WorkoutRepository workoutRepository
 
     String getBasePath() { "/users" }
 
+    private String SCHEDULED_WORKOUTS_PATH = "scheduled-workouts"
+
     def setup() {
-        def result = exerciseRepository.save(testExercise)
-
-        // set the options that are in our user's list to the newly saved options
-        testFusionUser.userCompletedWorkoutLookups.each { option ->
-            option.exerciseOption = result.exercises.find { resultOption -> resultOption.name == option.exerciseOption.name }
-        }
-
-        // remove seeded users
-        userRepository.deleteAllInBatch()
-
-        workoutRepository.save(testWorkout)
-        userRepository.save(testFusionUser)
-        userRepository.save(otherTestFusionUser)
+        workoutRepository.save(this.testWorkout)
+        scheduledWorkoutRepository.save(this.testScheduledWorkout)
+        userRepository.save([testFusionUser, otherTestFusionUser])
     }
 
     def cleanup() {
-        exerciseRepository.deleteAllInBatch()
-        userRepository.deleteAllInBatch()
         workoutRepository.deleteAllInBatch()
+        userRepository.deleteAllInBatch()
+        scheduledWorkoutRepository.deleteAllInBatch()
     }
 
     def "get a list of users"() {
@@ -124,96 +118,52 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
         updatedUser.programLevel == FusionUser.ProgramLevel.SILVER.name
     }
 
-    def "find a list of the user's completed workout/exercise option lookups"() {
+    def "find a list of the user's completed workouts"() {
         given:
+
         when:
-        def result = restTemplate.getForEntity(serviceURI("/${testFusionUser.id}/workouts?page=0&pageSize=10"), List.class)
+        def url = serviceURI("/${testFusionUser.id}/${SCHEDULED_WORKOUTS_PATH}?page=0&pageSize=10")
+        def result = restTemplate.getForEntity(serviceURI("/${testFusionUser.id}/${SCHEDULED_WORKOUTS_PATH}?page=0&pageSize=10"), List.class)
         List<UserCompletedWorkoutResponse> completedWorkouts = result.body
 
         then:
         result.statusCode == HttpStatus.OK
-        completedWorkouts.size() == testFusionUser.userCompletedWorkoutLookups.size()
+        completedWorkouts.size() == testFusionUser.userCompletedScheduledWorkouts.size()
     }
 
-    def "add a completed workout/exercise option lookups for a user"() {
+    def "add a completed workouts"() {
         given:
-        def completedWorkoutRequest = createCompletedWorkoutRequest()
-
-        def lookupResponseList = lookupResponses()
-        def expectedExerciseResponse = exerciseResponse(lookupResponseList)
-        def expectedResponse = workoutResponse(expectedExerciseResponse)
+        def completedWorkoutRequest = new UserCompletedScheduledWorkoutRequest("25")
 
         when:
-        def result = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/workouts/${testWorkout.id}"),
+        def result = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/${SCHEDULED_WORKOUTS_PATH}/${this.testScheduledWorkout.id}"),
                 completedWorkoutRequest, UserCompletedWorkoutResponse.class)
         def userCompletedWorkout = result.body
 
         then:
         result.statusCode == HttpStatus.CREATED
-        userCompletedWorkout.workoutId == expectedResponse.workoutId
-        userCompletedWorkout.duration == expectedResponse.duration
-        userCompletedWorkout.completedDate == expectedResponse.completedDate
-        userCompletedWorkout.exercise.id == expectedResponse.exercise.id
-        userCompletedWorkout.exercise.name == expectedResponse.exercise.name
-        userCompletedWorkout.exercise.instructions == expectedResponse.exercise.instructions
-        userCompletedWorkout.exercise.results.each { completedResult ->
-            def expectedResponseResult = expectedResponse.exercise.results.find {
-                it.exerciseOptionId == completedResult.exerciseOptionId
-            }
-            completedResult.lookupId != null
-            completedResult.exerciseOptionId == expectedResponseResult.exerciseOptionId
-            completedResult.result == expectedResponseResult.result
-            completedResult.description == expectedResponseResult.description
-            completedResult.name == expectedResponseResult.name
-            completedResult.getAmount == expectedResponseResult.targetAmount
-            completedResult.type == expectedResponseResult.type
-        }
+        userCompletedWorkout.result == "25"
+        userCompletedWorkout.scheduledWorkout == this.testScheduledWorkout
     }
 
-    def "update a completed workout/exercise option lookups for a user"() {
+    def "update a completed workouts"() {
         given:
         def newResultValue = "52"
-        def completedWorkoutRequest = createCompletedWorkoutRequest()
-        def createResult = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/workouts/${testWorkout.id}"),
+        def completedWorkoutRequest = new UserCompletedScheduledWorkoutRequest("25")
+        def createResult = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/${SCHEDULED_WORKOUTS_PATH}/${this.testScheduledWorkout.id}"),
                 completedWorkoutRequest, UserCompletedWorkoutResponse.class)
         def createBody = createResult.body
-        def updateRequest = createCompletedWorkoutRequest()
-        updateRequest.results = updateRequest.results.each { it.result = newResultValue }
+        def updateRequest = new UserCompletedScheduledWorkoutRequest("25")
+        updateRequest.result = newResultValue
 
         when:
-        def updateResult = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/workouts/${testWorkout.id}"),
+        def updateResult = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/${SCHEDULED_WORKOUTS_PATH}/${this.testScheduledWorkout.id}"),
                 updateRequest, UserCompletedWorkoutResponse.class)
         def updateBody = updateResult.body
 
         then:
-        updateBody.workoutId == createBody.workoutId
-        updateBody.exercise.results.size() == 3
-        // we've deleted the previous lookups, so we should get a new set of lookup Ids
-        updateBody.exercise.results.lookupId != createBody.exercise.results.lookupId
-        updateBody.exercise.results.each { it.result == newResultValue }
-        updateBody.exercise.results.result != createBody.exercise.results.result
+        updateBody.scheduledWorkout == createBody.scheduledWorkout
+        updateBody.result == newResultValue
     }
 
-    private UserCompletedWorkoutResponse workoutResponse(UserCompletedWorkoutResponse.CompletedExerciseResponse expectedExerciseResponse) {
-        new UserCompletedWorkoutResponse(testWorkout.id, testWorkout.duration,
-                testWorkout.workoutDate, expectedExerciseResponse, testWorkout.previewText)
-    }
-
-    private UserCompletedWorkoutResponse.CompletedExerciseResponse exerciseResponse(List<UserCompletedWorkoutResponse.CompletedExerciseOptionResponse> lookupResponseList) {
-        new UserCompletedWorkoutResponse.CompletedExerciseResponse(testWorkout.workout.id,
-                testWorkout.workout.name, testWorkout.workout.instructions, lookupResponseList)
-    }
-
-    private List<UserCompletedWorkoutResponse.CompletedExerciseOptionResponse> lookupResponses() {
-        testWorkout.workout.exercises.collect { option ->
-            new UserCompletedWorkoutResponse.CompletedExerciseOptionResponse(UUID.randomUUID(), option.id, option.name,
-                    option.type, "25", option.description, option.amount, option.duration)
-        }
-    }
-
-    private UserCompletedWorkoutRequest createCompletedWorkoutRequest() {
-        new UserCompletedWorkoutRequest(testWorkout.workout.exercises.collect { option ->
-            new UserCompletedWorkoutRequest.CompletedExerciseResultRequest(null, option.id, "25")
-        })
-    }
 }

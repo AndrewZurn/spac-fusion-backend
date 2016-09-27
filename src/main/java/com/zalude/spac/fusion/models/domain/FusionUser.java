@@ -21,7 +21,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = "userCompletedWorkoutLookups")
+@ToString(exclude = "userCompletedScheduledWorkouts")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FusionUser {
 
@@ -55,7 +55,7 @@ public class FusionUser {
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
   @JsonIgnore
-  private List<UserCompletedWorkoutLookup> userCompletedWorkoutLookups;
+  private List<UserCompletedScheduledWorkout> userCompletedScheduledWorkouts;
 
   @Getter
   public enum ProgramLevel {

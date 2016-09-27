@@ -12,27 +12,19 @@ public class UserRepositoryIntegrationTest extends RepositoryTestBase implements
     private UserRepository userRepository
 
     @Inject
-    private ExerciseRepository exerciseOptionRepository
+    private ScheduledWorkoutRepository scheduledWorkoutRepository
 
     @Inject
-    private WorkoutWithDateRepository exerciseRepository
-
-    @Inject
-    private UserCompletedWorkoutLookupRepository userExerciseOptionLookupRepository
+    private UserCompletedScheduledWorkoutRepository userCompletedWorkoutLookupRepository
 
     void setup() {
-        def result = exerciseRepository.save(testExercise)
-
-        // set the options that are in our user's list to the newly saved options
-        testFusionUser.userCompletedWorkoutLookups.each { option ->
-            option.exerciseOption = result.exercises.find { resultOption -> resultOption.name == option.exerciseOption.name }
-        }
+        scheduledWorkoutRepository.save(this.testScheduledWorkout)
         userRepository.save(testFusionUser)
     }
 
     void cleanup() {
         userRepository.deleteAllInBatch()
-        exerciseRepository.deleteAllInBatch()
+        scheduledWorkoutRepository.deleteAllInBatch()
     }
 
     def "find an empty list of user"() {
@@ -56,17 +48,17 @@ public class UserRepositoryIntegrationTest extends RepositoryTestBase implements
         then:
         users.size() == 1
         user == testFusionUser
-        user.userCompletedWorkoutLookups == testFusionUser.userCompletedWorkoutLookups
+        user.userCompletedScheduledWorkouts == testFusionUser.userCompletedScheduledWorkouts
     }
 
     @Transactional
-    def "get an empty list of user exercise option lookups"() {
+    def "get an empty list of user completed workouts"() {
         given:
         userRepository.deleteAllInBatch()
-        userExerciseOptionLookupRepository.deleteAllInBatch()
+        userCompletedWorkoutLookupRepository.deleteAllInBatch()
 
         when:
-        def lookups = userExerciseOptionLookupRepository.findAll()
+        def lookups = userCompletedWorkoutLookupRepository.findAll()
 
         then:
         lookups.size() == 0

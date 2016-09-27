@@ -32,6 +32,7 @@ public class Exercise {
   @NonNull
   private String name;
 
+  @NonNull
   private String amount; // example: 500 m, 200, 5x, 5x5
 
   @ManyToOne
