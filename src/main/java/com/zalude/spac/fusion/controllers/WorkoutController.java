@@ -44,7 +44,7 @@ public class WorkoutController {
     return new ResponseEntity(workoutService.findAllWorkouts(), HttpStatus.OK);
   }
 
-  @RequestMapping(method = GET, value = "/{scheduledWorkoutId}")
+  @RequestMapping(method = GET, value = "/{workoutId}")
   public ResponseEntity<Workout> getWorkout(@PathVariable UUID workoutId) {
     val workout = workoutService.findExercise(workoutId);
     if (workout.isPresent()) {
@@ -55,19 +55,19 @@ public class WorkoutController {
   }
 
   @RequestMapping(method = POST)
-  public ResponseEntity createWorkout(@RequestBody @Valid CreateOrUpdateWorkoutRequest exerciseRequest) {
+  public ResponseEntity createWorkout(@RequestBody @Valid CreateOrUpdateWorkoutRequest workoutRequest) {
     try {
-      return createOrUpdateWorkout(toDomain(exerciseRequest, UUID.randomUUID()), false);
+      return createOrUpdateWorkout(toDomain(workoutRequest, UUID.randomUUID()), false);
     } catch (IllegalArgumentException e) {
       return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
   }
 
-  @RequestMapping(method = PUT, value = "/{scheduledWorkoutId}")
-  public ResponseEntity updateWorkout(@PathVariable UUID exerciseId,
-                                      @RequestBody @Valid CreateOrUpdateWorkoutRequest exerciseRequest) {
+  @RequestMapping(method = PUT, value = "/{workoutId}")
+  public ResponseEntity updateWorkout(@PathVariable UUID workoutId,
+                                      @RequestBody @Valid CreateOrUpdateWorkoutRequest workoutRequest) {
     try {
-      val exercise = toDomain(exerciseRequest, exerciseId);
+      val exercise = toDomain(workoutRequest, workoutId);
       return createOrUpdateWorkout(exercise, true);
     } catch (IllegalArgumentException e) {
       return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);

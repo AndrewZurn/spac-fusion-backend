@@ -22,7 +22,7 @@ public interface ScheduledWorkoutRepository extends JpaRepository<ScheduledWorko
   @Query("SELECT w FROM ScheduledWorkout w WHERE w.workoutDate = current_date")
   ScheduledWorkout findTodaysWorkout();
 
-  @Query("SELECT w FROM ScheduledWorkout w WHERE w.workoutDate BETWEEN :dateStartRange AND :dateEndRange")
+  @Query("SELECT w FROM ScheduledWorkout w WHERE w.workoutDate BETWEEN :dateStartRange AND :dateEndRange order by w.workoutDate asc")
   Iterable<ScheduledWorkout> findAllWorkouts(@Param("dateStartRange") LocalDate dateStartRange,
                                              @Param("dateEndRange") LocalDate dateEndRange);
 

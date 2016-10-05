@@ -56,7 +56,7 @@ public class UserController {
     return returnUserIfFound(userService.findByAuth0Id(auth0Id));
   }
 
-  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/remaining-scheduledWorkout-unlocks")
+  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/remaining-workout-unlocks")
   public ResponseEntity getUserRemainingWorkoutUnlocks(@PathVariable UUID userId) {
     return userService.getUserRemainingWorkoutUnlocks(userId)
         .map(result -> new ResponseEntity(
