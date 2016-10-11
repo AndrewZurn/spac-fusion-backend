@@ -1,10 +1,12 @@
 package com.zalude.spac.fusion.models.request;
 
-import lombok.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * TODO: DESCRIPTION OF CLASS HERE
@@ -18,6 +20,6 @@ import java.util.UUID;
 public class UserCompletedScheduledWorkoutRequest {
 
   @NotNull
-  private String result;
-  
+  private JsonNode result;
+
 }

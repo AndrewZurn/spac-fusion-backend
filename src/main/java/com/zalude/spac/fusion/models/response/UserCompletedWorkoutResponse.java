@@ -1,6 +1,7 @@
 package com.zalude.spac.fusion.models.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.zalude.spac.fusion.models.domain.Exercise;
 import com.zalude.spac.fusion.models.domain.Workout;
 import com.zalude.spac.fusion.models.domain.ScheduledWorkout;
@@ -23,5 +24,5 @@ import java.util.UUID;
 public class UserCompletedWorkoutResponse {
   @NotNull private UUID id;
   @NonNull private ScheduledWorkout scheduledWorkout;
-  @NonNull private String result;
+  @NonNull private JsonNode result;
 }

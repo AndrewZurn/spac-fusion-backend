@@ -1,5 +1,8 @@
 package com.zalude.spac.fusion.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.zalude.spac.fusion.exceptions.ResourceNotFoundException;
 import com.zalude.spac.fusion.exceptions.ResourceValidationException;
 import com.zalude.spac.fusion.models.domain.*;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -163,8 +167,18 @@ public class UserController {
     return asUserCompletedWorkoutResponse(userCompletedScheduledWorkout);
   }
 
-  private UserCompletedWorkoutResponse asUserCompletedWorkoutResponse(UserCompletedScheduledWorkout lookup) {
-    return new UserCompletedWorkoutResponse(lookup.getId(), lookup.getScheduledWorkout(), lookup.getResult());
+  private UserCompletedWorkoutResponse asUserCompletedWorkoutResponse(UserCompletedScheduledWorkout workout) {
+    JsonNode workoutResult;
+    val r1 = workout.getResult();
+    val mapper = new ObjectMapper();
+    try {
+      workoutResult = mapper.readTree(r1);
+    } catch (IOException e) {
+      e.printStackTrace();
+      workoutResult = new TextNode("Unknown Result");
+    }
+
+    return new UserCompletedWorkoutResponse(workout.getId(), workout.getScheduledWorkout(), workoutResult);
   }
 
   private UserCompletedScheduledWorkout toDomain(UserCompletedScheduledWorkoutRequest completedWorkoutRequest, UUID scheduledWorkoutId, UUID userId) throws ResourceValidationException {
@@ -179,6 +193,6 @@ public class UserController {
         .orElseThrow(() ->
             new ResourceValidationException(Collections.singletonMap(scheduledWorkoutId, Collections.singletonList("Could not find Workout")), null, null));
 
-    return new UserCompletedScheduledWorkout(scheduledWorkoutId, user, workout, completedWorkoutRequest.getResult());
+    return new UserCompletedScheduledWorkout(scheduledWorkoutId, user, workout, completedWorkoutRequest.getResult().toString());
   }
 }

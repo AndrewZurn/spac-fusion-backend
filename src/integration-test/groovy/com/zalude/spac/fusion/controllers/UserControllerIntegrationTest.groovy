@@ -1,5 +1,8 @@
 package com.zalude.spac.fusion.controllers
 
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.zalude.spac.fusion.ControllerTestBase
 import com.zalude.spac.fusion.IntegrationTestData
 import com.zalude.spac.fusion.models.domain.FusionUser
@@ -13,7 +16,6 @@ import com.zalude.spac.fusion.repositories.WorkoutRepository
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.transaction.annotation.Transactional
 
 import javax.inject.Inject
 
@@ -133,7 +135,8 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
 
     def "add a completed workouts"() {
         given:
-        def completedWorkoutRequest = new UserCompletedScheduledWorkoutRequest("25")
+        def jsonArray = new ArrayNode(JsonNodeFactory.instance).add("25")
+        def completedWorkoutRequest = new UserCompletedScheduledWorkoutRequest(jsonArray)
 
         when:
         def result = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/${SCHEDULED_WORKOUTS_PATH}/${this.testScheduledWorkout.id}"),
@@ -142,19 +145,38 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
 
         then:
         result.statusCode == HttpStatus.CREATED
-        userCompletedWorkout.result == "25"
+        userCompletedWorkout.result == jsonArray
+        userCompletedWorkout.scheduledWorkout == this.testScheduledWorkout
+    }
+
+    def "add a completed workout saving and returning json as a result"() {
+        given:
+        def jsonObject = new ObjectNode(JsonNodeFactory.instance)
+            .put("exerciseId", "ffebed48-9272-4c44-85fb-a24dff1e6ae2")
+            .put("weight", 25)
+        def jsonArray = new ArrayNode(JsonNodeFactory.instance).add(jsonObject)
+        def completedWorkoutRequest = new UserCompletedScheduledWorkoutRequest(jsonArray)
+
+        when:
+        def result = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/${SCHEDULED_WORKOUTS_PATH}/${this.testScheduledWorkout.id}"),
+                completedWorkoutRequest, UserCompletedWorkoutResponse.class)
+        def userCompletedWorkout = result.body
+
+        then:
+        result.statusCode == HttpStatus.CREATED
+        userCompletedWorkout.result == jsonArray
         userCompletedWorkout.scheduledWorkout == this.testScheduledWorkout
     }
 
     def "update a completed workouts"() {
         given:
-        def newResultValue = "52"
-        def completedWorkoutRequest = new UserCompletedScheduledWorkoutRequest("25")
+        def jsonArray = new ArrayNode(JsonNodeFactory.instance).add("25")
+        def completedWorkoutRequest = new UserCompletedScheduledWorkoutRequest(jsonArray)
         def createResult = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/${SCHEDULED_WORKOUTS_PATH}/${this.testScheduledWorkout.id}"),
                 completedWorkoutRequest, UserCompletedWorkoutResponse.class)
         def createBody = createResult.body
-        def updateRequest = new UserCompletedScheduledWorkoutRequest("25")
-        updateRequest.result = newResultValue
+        def updatedJsonArray = new ArrayNode(JsonNodeFactory.instance).add("52")
+        def updateRequest = new UserCompletedScheduledWorkoutRequest(updatedJsonArray)
 
         when:
         def updateResult = restTemplate.postForEntity(serviceURI("/${otherTestFusionUser.id}/${SCHEDULED_WORKOUTS_PATH}/${this.testScheduledWorkout.id}"),
@@ -163,7 +185,7 @@ public class UserControllerIntegrationTest extends ControllerTestBase implements
 
         then:
         updateBody.scheduledWorkout == createBody.scheduledWorkout
-        updateBody.result == newResultValue
+        updateBody.result == updatedJsonArray
     }
 
 }

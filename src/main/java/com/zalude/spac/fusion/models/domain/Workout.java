@@ -54,9 +54,9 @@ public class Workout {
   @Getter
   public enum WorkoutType {
     AMRAP("AMRAP", "number"),
-    TASK("Task", "time"),
-    HEAVY("Heavy", "number"),
-    CARDIO("Cardio", "NA"),
+    TASK("TASK", "time"),
+    HEAVY("HEAVY", "number"),
+    CARDIO("CARDIO", "NA"),
     THIRTY_THIRTY("30:30", "NA"),
     TWENTY_TEN("20:10", "NA");
 
