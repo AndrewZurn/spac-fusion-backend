@@ -169,10 +169,10 @@ public class UserController {
 
   private UserCompletedWorkoutResponse asUserCompletedWorkoutResponse(UserCompletedScheduledWorkout workout) {
     JsonNode workoutResult;
-    val r1 = workout.getResult();
+    val result = workout.getResult();
     val mapper = new ObjectMapper();
     try {
-      workoutResult = mapper.readTree(r1);
+      workoutResult = mapper.readTree(result);
     } catch (IOException e) {
       e.printStackTrace();
       workoutResult = new TextNode("Unknown Result");

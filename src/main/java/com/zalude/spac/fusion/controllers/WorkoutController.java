@@ -94,7 +94,7 @@ public class WorkoutController {
   }
 
   private Workout toDomain(CreateOrUpdateWorkoutRequest workoutRequest, UUID exerciseId) {
-    val workout = new Workout(workoutRequest.getName(), workoutRequest.getExerciseType(), Collections.emptyList());
+    val workout = new Workout(workoutRequest.getName(), workoutRequest.getWorkoutType(), Collections.emptyList());
     workout.setId(exerciseId);
     workout.setInstructions(workoutRequest.getInstructions());
     workout.setDuration(workoutRequest.getDuration());
@@ -117,6 +117,7 @@ public class WorkoutController {
 
     // create and set the proper fields on the ExerciseOption
     val exercise = new Exercise(exerciseIdToUser, exerciseRequest.getName(), exerciseRequest.getAmount());
+    exercise.setInput(exerciseRequest.getInput());
     exercise.setWorkout(workout);
 
     return exercise;

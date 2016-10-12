@@ -9,6 +9,6 @@ import spock.lang.Stepwise
 @Stepwise
 @WebIntegrationTest
 @ContextConfiguration(loader = SpringApplicationContextLoader.class, classes = [SpacFusionApplication.class] )
-class RepositoryTestBase extends Specification {
+class RepositoryBase extends Specification {
 
 }

@@ -56,6 +56,9 @@ databaseChangeLog:
                     name: "amount"
                     type: "text"
                 - column:
+                    name: "input"
+                    type: "text"
+                - column:
                     name: "workout_id"
                     type: "uuid"
           - createTable:

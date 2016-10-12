@@ -1,12 +1,12 @@
 package com.zalude.spac.fusion.repositories
 
 import com.zalude.spac.fusion.IntegrationTestData
-import com.zalude.spac.fusion.RepositoryTestBase
+import com.zalude.spac.fusion.RepositoryBase
 import com.zalude.spac.fusion.models.domain.Exercise
 
 import javax.inject.Inject
 
-class ExerciseRepositoryIntegrationTest extends RepositoryTestBase implements IntegrationTestData {
+class ExerciseRepositoryIntegrationTest extends RepositoryBase implements IntegrationTestData {
 
     @Inject
     WorkoutRepository workoutRepository

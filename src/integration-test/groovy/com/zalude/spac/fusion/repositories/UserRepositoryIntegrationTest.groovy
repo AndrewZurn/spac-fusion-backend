@@ -1,12 +1,12 @@
 package com.zalude.spac.fusion.repositories
 
 import com.zalude.spac.fusion.IntegrationTestData
-import com.zalude.spac.fusion.RepositoryTestBase
+import com.zalude.spac.fusion.RepositoryBase
 import org.springframework.transaction.annotation.Transactional
 
 import javax.inject.Inject
 
-public class UserRepositoryIntegrationTest extends RepositoryTestBase implements IntegrationTestData {
+public class UserRepositoryIntegrationTest extends RepositoryBase implements IntegrationTestData {
 
     @Inject
     private UserRepository userRepository

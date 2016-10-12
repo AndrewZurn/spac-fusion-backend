@@ -1,7 +1,7 @@
 package com.zalude.spac.fusion.controllers
 
 import com.zalude.spac.fusion.IntegrationTestData;
-import com.zalude.spac.fusion.ControllerTestBase
+import com.zalude.spac.fusion.ControllerBase
 import com.zalude.spac.fusion.models.domain.Workout
 import com.zalude.spac.fusion.models.request.CreateOrUpdateExerciseRequest
 import com.zalude.spac.fusion.models.request.CreateOrUpdateWorkoutRequest
@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity
 import javax.inject.Inject
 import java.util.stream.Collectors
 
-class WorkoutControllerIntegrationTest extends ControllerTestBase implements IntegrationTestData {
+class WorkoutControllerIntegrationTest extends ControllerBase implements IntegrationTestData {
 
     String getBasePath() { "/workouts" }
 
@@ -26,7 +26,7 @@ class WorkoutControllerIntegrationTest extends ControllerTestBase implements Int
         this.testWorkout = workoutRepository.save(this.testWorkout)
 
         createExercises = this.testExerciseList.stream()
-                .map { exercise -> new CreateOrUpdateExerciseRequest(UUID.randomUUID(), exercise.name, "50", null) }
+                .map { exercise -> new CreateOrUpdateExerciseRequest(UUID.randomUUID(), exercise.name, "50", null, null) }
                 .collect(Collectors.toList())
 
         createWorkoutRequestBody = new CreateOrUpdateWorkoutRequest("New Pushup Routine", "Now get on the ground!",

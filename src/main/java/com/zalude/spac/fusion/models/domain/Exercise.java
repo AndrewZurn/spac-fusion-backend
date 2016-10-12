@@ -35,6 +35,10 @@ public class Exercise {
   @NonNull
   private String amount; // example: 500 m, 200, 5x, 5x5
 
+  // Denotes this exercise requires input for result.
+  // This value should be used as it's appender (ie. 50 'lbs' to be saved as this exercises result.
+  private String input;
+
   @ManyToOne
   @JoinColumn(name = "workout_id")
   @JsonBackReference
