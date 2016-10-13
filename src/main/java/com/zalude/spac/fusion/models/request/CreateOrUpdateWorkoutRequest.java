@@ -28,6 +28,8 @@ public class CreateOrUpdateWorkoutRequest {
 
   @NotBlank(message = "Please provide the type for the workout (AMRAP, TASK, HEAVE, 30:20, 20:10).")
   private String workoutType;
+  
+  private String input;
 
   private List<CreateOrUpdateExerciseRequest> exercises;
 }

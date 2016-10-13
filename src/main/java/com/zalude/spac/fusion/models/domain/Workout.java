@@ -39,6 +39,10 @@ public class Workout {
   @NonNull
   private String workoutType;
 
+  // Denotes this exercise requires input for result.
+  // This value should be used as it's appender (ie. 50 'lbs' to be saved as this exercises result.
+  private String input;
+
   @OneToMany(mappedBy = "workout",
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER,

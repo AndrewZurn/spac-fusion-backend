@@ -36,6 +36,9 @@ databaseChangeLog:
                 - column:
                     name: "duration"
                     type: "text"
+                - column:
+                    name: "input"
+                    type: "text"
           - createTable:
               tableName: "exercise"
               schemaName: "public"

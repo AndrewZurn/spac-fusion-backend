@@ -30,7 +30,7 @@ class WorkoutControllerIntegrationTest extends ControllerBase implements Integra
                 .collect(Collectors.toList())
 
         createWorkoutRequestBody = new CreateOrUpdateWorkoutRequest("New Pushup Routine", "Now get on the ground!",
-                "2 minutes", "AMRAP", createExercises)
+                "2 minutes", "AMRAP", null, createExercises)
     }
 
     def cleanup() {

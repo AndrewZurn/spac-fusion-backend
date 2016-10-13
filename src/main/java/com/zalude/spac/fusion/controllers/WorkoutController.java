@@ -93,9 +93,10 @@ public class WorkoutController {
     return new ResponseEntity(savedWorkout, successStatus);
   }
 
-  private Workout toDomain(CreateOrUpdateWorkoutRequest workoutRequest, UUID exerciseId) {
+  private Workout toDomain(CreateOrUpdateWorkoutRequest workoutRequest, UUID workoutId) {
     val workout = new Workout(workoutRequest.getName(), workoutRequest.getWorkoutType(), Collections.emptyList());
-    workout.setId(exerciseId);
+    workout.setInput(workoutRequest.getInput());
+    workout.setId(workoutId);
     workout.setInstructions(workoutRequest.getInstructions());
     workout.setDuration(workoutRequest.getDuration());
 

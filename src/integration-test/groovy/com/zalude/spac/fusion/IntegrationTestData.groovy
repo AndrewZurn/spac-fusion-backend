@@ -30,6 +30,7 @@ trait IntegrationTestData {
 
         this.testWorkout = new Workout("Traditional Core and Upper Body", "Doing some good ol' push/sit/pull ups", testExerciseList)
         this.testWorkout.id = testWorkoutId
+        this.testWorkout.input = "Repetitions"
 
         this.testExerciseList = this.testExerciseList.each { it -> it.workout = testWorkout } as List
         this.testWorkout.exercises = this.testExerciseList
