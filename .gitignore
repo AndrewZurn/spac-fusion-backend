@@ -97,4 +97,4 @@ frontend/*.iml
 frontend/webpack-assets.json
 frontend/webpack-stats.json
 frontend/npm-debug.log
-frontend/node-v6.6.0-darwin-x64/
+frontend/node-*/
