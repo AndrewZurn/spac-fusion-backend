@@ -50,13 +50,11 @@ public class WorkoutService {
 
   public Workout create(Workout workout) throws ResourceNotFoundException, ResourceValidationException {
     validatedWorkout(workout);
-    validateExercises(workout.getExercises());
     return workoutRepository.save(workout);
   }
 
   public Workout update(Workout workout) throws ResourceNotFoundException, ResourceValidationException {
     validatedWorkout(workout);
-    validateExercises(workout.getExercises());
 
     val existingWorkout = this.workoutRepository.findOne(workout.getId());
     existingWorkout.getExercises().clear();
@@ -69,40 +67,6 @@ public class WorkoutService {
 
   public Optional<Exercise> findExerciseOption(UUID exerciseOptionId) {
     return Optional.ofNullable(exerciseRepository.findOne(exerciseOptionId));
-  }
-
-  private void validateExercises(List<Exercise> exercises) throws ResourceNotFoundException, ResourceValidationException {
-    // validate our exercise options are valid
-    val errors = validateExerciseFields(exercises);
-
-    if (errors.size() > 0) {
-      throw new ResourceValidationException(null, errors,
-          String.format("Validation errors encountered during create operation for ExerciseOptions with names '%s'",
-              exercises.stream()
-                  .map(Exercise::getName)
-                  .collect(Collectors.joining(", "))));
-    }
-  }
-
-  private Map<String, List<String>> validateExerciseFields(List<Exercise> exercises) {
-    Map<String, List<String>> errors = new HashMap<>();
-
-    exercises.forEach(option -> {
-      if (exerciseRepository.findByNameAndWorkoutIdNot(option.getName(), option.getWorkout().getId()).size() > 0) {
-        final String error = String.format("Exercise Option with name '%s' already exists in Exercise: '%s'.",
-            option.getName(), option.getWorkout().getName());
-        List<String> errorList = errors.get(option.getName());
-        if (errorList != null) {
-          errorList.add(error);
-          errors.put(option.getName(), errorList);
-        } else {
-          errors.put(option.getName(), Collections.singletonList(error));
-        }
-
-      }
-    });
-
-    return errors;
   }
 
   private void validateExerciseExists(UUID exerciseId) throws ResourceNotFoundException {
