@@ -19,14 +19,14 @@ import java.util.UUID;
 @Repository
 public interface ScheduledWorkoutRepository extends JpaRepository<ScheduledWorkout, UUID> {
 
-  @Query("SELECT w FROM ScheduledWorkout w WHERE w.workoutDate = current_date")
+  @Query("SELECT w FROM ScheduledWorkout w WHERE w.workoutDate = current_date AND w.active = true")
   ScheduledWorkout findTodaysWorkout();
 
   @Query("SELECT w FROM ScheduledWorkout w WHERE w.workoutDate BETWEEN :dateStartRange AND :dateEndRange order by w.workoutDate asc")
   Iterable<ScheduledWorkout> findAllWorkouts(@Param("dateStartRange") LocalDate dateStartRange,
                                              @Param("dateEndRange") LocalDate dateEndRange);
 
-  ScheduledWorkout findOneByWorkoutDate(LocalDate workoutDate);
+  Iterable<ScheduledWorkout> findAllByWorkoutDate(LocalDate workoutDate);
 
   ScheduledWorkout findOneByActiveAndWorkoutDate(boolean active, LocalDate workoutDate);
 }

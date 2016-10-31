@@ -43,8 +43,12 @@ public class ScheduledWorkoutService {
     return Optional.ofNullable(this.scheduledWorkoutRepository.findTodaysWorkout());
   }
 
-  public Optional<ScheduledWorkout> findWorkoutForDate(LocalDate date) {
-    return Optional.ofNullable(this.scheduledWorkoutRepository.findOneByWorkoutDate(date));
+  public Iterable<ScheduledWorkout> findWorkoutsForDate(LocalDate date) {
+    return this.scheduledWorkoutRepository.findAllByWorkoutDate(date);
+  }
+
+  public Optional<ScheduledWorkout> findWorkoutForDateAndActiveStatus(boolean activeStatus, LocalDate date) {
+    return Optional.ofNullable(this.scheduledWorkoutRepository.findOneByActiveAndWorkoutDate(activeStatus, date));
   }
 
   public Iterable<ScheduledWorkout> findRemainingWorkoutsForWeek() {

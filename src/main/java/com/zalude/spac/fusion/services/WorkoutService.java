@@ -51,10 +51,8 @@ public class WorkoutService {
   public Workout create(Workout workout) throws ResourceNotFoundException, ResourceValidationException {
     validatedWorkout(workout);
     validateExercises(workout.getExercises());
-
     return workoutRepository.save(workout);
   }
-
 
   public Workout update(Workout workout) throws ResourceNotFoundException, ResourceValidationException {
     validatedWorkout(workout);

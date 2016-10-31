@@ -12,10 +12,8 @@ import lombok.val;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -71,8 +69,14 @@ public class ScheduledWorkoutController {
   }
 
   @RequestMapping(method = GET, value = "/by-date/{workoutDate}")
-  public ResponseEntity getThisWeeksWorkouts(@PathVariable @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDate workoutDate) {
-    return returnWorkoutIfFound(scheduledWorkoutService.findWorkoutForDate(workoutDate));
+  public ResponseEntity getWorkoutByDate(@PathVariable @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDate workoutDate,
+                                         @RequestParam(name = "active", required = false) String active) {
+    if (!StringUtils.isEmpty(active)) {
+      val activeStatus = Boolean.valueOf(active);
+      return returnWorkoutIfFound(scheduledWorkoutService.findWorkoutForDateAndActiveStatus(activeStatus, workoutDate));
+    } else {
+      return new ResponseEntity(scheduledWorkoutService.findWorkoutsForDate(workoutDate), HttpStatus.OK);
+    }
   }
 
   @RequestMapping(method = POST)
