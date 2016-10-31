@@ -23,7 +23,10 @@ public interface UserCompletedScheduledWorkoutRepository extends JpaRepository<U
 
   List<UserCompletedScheduledWorkout> findAllByUserId(UUID userId, Pageable pageable);
 
-  UserCompletedScheduledWorkout findByUserIdAndScheduledWorkoutId(UUID userId, UUID scheduledWorkoutId);
+  @Query("SELECT u FROM UserCompletedScheduledWorkout u " +
+      "WHERE u.scheduledWorkout.workoutDate = :workoutDate AND u.user.id = :userId")
+  UserCompletedScheduledWorkout findByUserIdAndWorkoutDate(@Param("userId") UUID userId,
+                                                           @Param("workoutDate") LocalDate workoutDate);
 
   @Query("SELECT u FROM UserCompletedScheduledWorkout u " +
       "WHERE u.scheduledWorkout.workoutDate BETWEEN :startOfWeek AND :endOfWeek AND u.user.id = :userId")

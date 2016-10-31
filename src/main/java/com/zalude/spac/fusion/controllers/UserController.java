@@ -14,6 +14,7 @@ import com.zalude.spac.fusion.services.UserService;
 import com.zalude.spac.fusion.services.ScheduledWorkoutService;
 import lombok.NonNull;
 import lombok.val;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -125,10 +127,10 @@ public class UserController {
   }
 
   // GET COMPLETED WORKOUTS FOR USER
-  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/scheduled-workouts/{scheduledWorkoutId}")
+  @RequestMapping(method = RequestMethod.GET, value = "/{userId}/scheduled-workouts/{workoutDate}")
   public ResponseEntity getCompletedWorkout(@PathVariable UUID userId,
-                                            @PathVariable UUID scheduledWorkoutId) {
-    val userCompletedWorkoutLookup = userService.getCompletedWorkoutForUser(userId, scheduledWorkoutId);
+                                            @PathVariable @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDate workoutDate) {
+    val userCompletedWorkoutLookup = userService.getCompletedWorkoutForUser(userId, workoutDate);
     final Optional<UserCompletedWorkoutResponse> userCompletedWorkoutResponse =
         userCompletedWorkoutLookup.map(this::asResponse);
 

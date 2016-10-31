@@ -68,12 +68,12 @@ public class UserService {
     }
   }
 
-  public Optional<UserCompletedScheduledWorkout> getCompletedWorkoutForUser(UUID userId, UUID scheduledWorkoutId) {
+  public Optional<UserCompletedScheduledWorkout> getCompletedWorkoutForUser(UUID userId, LocalDate workoutDate) {
     val user = find(userId);
     if (!user.isPresent()) {
       return Optional.empty();
     } else {
-      return Optional.ofNullable(userCompletedScheduledWorkoutRepository.findByUserIdAndScheduledWorkoutId(userId, scheduledWorkoutId));
+      return Optional.ofNullable(userCompletedScheduledWorkoutRepository.findByUserIdAndWorkoutDate(userId, workoutDate));
     }
   }
 
