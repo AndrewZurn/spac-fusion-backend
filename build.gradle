@@ -19,7 +19,7 @@ buildscript {
 
 jar {
     baseName = 'spac-fusion'
-    version = '0.0.6-SNAPSHOT'
+    version = '0.0.7-SNAPSHOT'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -50,6 +50,7 @@ configurations {
 dependencies {
     compile 'com.google.guava:guava:19.0'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    compile 'com.auth0:auth0:0.4.0'
     compile('org.codehaus.groovy:groovy-all:2.3.11')
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.boot:spring-boot-actuator-docs')
