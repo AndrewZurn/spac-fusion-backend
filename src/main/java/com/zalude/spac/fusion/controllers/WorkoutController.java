@@ -27,6 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
  *
  * @author Andrew Zurn (azurn)
  */
+@CrossOrigin(origins = {"http://localhost", "https://spac-fusion-editor.herokuapp.com"}, maxAge = 3600)
 @RestController
 @RequestMapping(path = "/workouts")
 public class WorkoutController {

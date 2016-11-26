@@ -4,10 +4,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +12,7 @@ import java.util.Map;
 /**
  * Created by azurn on 11/12/16.
  */
+@CrossOrigin(origins = {"http://localhost", "https://spac-fusion-editor.herokuapp.com"}, maxAge = 3600)
 @RestController
 @RequestMapping(path = "/management")
 public class ManagementController {
