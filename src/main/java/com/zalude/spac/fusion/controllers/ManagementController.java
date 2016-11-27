@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by azurn on 11/12/16.
  */
-@CrossOrigin(origins = {"http://localhost", "https://spac-fusion-editor.herokuapp.com"}, maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path = "/management")
 public class ManagementController {

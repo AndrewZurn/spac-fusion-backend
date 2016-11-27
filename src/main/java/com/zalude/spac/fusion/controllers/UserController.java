@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  *
  * @author Andrew Zurn (azurn)
  */
-@CrossOrigin(origins = {"http://localhost", "https://spac-fusion-editor.herokuapp.com"}, maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
